@@ -28,6 +28,7 @@ public class Player : MonoBehaviour
         public State state;
         public RopeState ropeState;
         public bool aimingEnabled;
+        public bool isGrounded;
     }
 
     public Info playerInfo { get; private set; }
