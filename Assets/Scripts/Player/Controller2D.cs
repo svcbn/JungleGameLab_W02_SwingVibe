@@ -1,6 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using System.Collections;
 
 [RequireComponent(typeof(BoxCollider2D))]
 public class Controller2D : MonoBehaviour
@@ -19,10 +18,12 @@ public class Controller2D : MonoBehaviour
     RaycastOrigins raycastOrigins;
     public CollisionInfo collisions;
 
+
     void Start()
     {
         collider = GetComponent<BoxCollider2D>();
         CalculateRaySpacing();
+        collisionMask = LayerMask.GetMask("Ground");
     }
 
     public void Move(Vector3 velocity)
@@ -99,6 +100,7 @@ public class Controller2D : MonoBehaviour
         raycastOrigins.bottomRight = new Vector2(bounds.max.x, bounds.min.y);
         raycastOrigins.topLeft = new Vector2(bounds.min.x, bounds.max.y);
         raycastOrigins.topRight = new Vector2(bounds.max.x, bounds.max.y);
+
     }
 
     void CalculateRaySpacing()
