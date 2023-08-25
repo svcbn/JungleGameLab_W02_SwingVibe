@@ -6,6 +6,7 @@ using W02;
 public abstract class PlayerAbility : MonoBehaviour
 {
     protected Player _player;
+    protected Controller2D _controller;
 
     protected float _horizontalMove;
     protected float _verticalMove;
@@ -39,6 +40,7 @@ public abstract class PlayerAbility : MonoBehaviour
     protected virtual void Init()
     {
         _player = GetComponentInParent<Player>();
+        _controller = GetComponent<Controller2D>();
     }
 
     protected void PreHandleInput()
