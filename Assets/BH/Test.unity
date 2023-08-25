@@ -514,9 +514,10 @@ GameObject:
   - component: {fileID: 297003492}
   - component: {fileID: 297003491}
   - component: {fileID: 297003490}
+  - component: {fileID: 297003493}
   - component: {fileID: 297003488}
   - component: {fileID: 297003487}
-  - component: {fileID: 297003493}
+  - component: {fileID: 297003494}
   m_Layer: 6
   m_Name: Player
   m_TagString: Untagged
@@ -536,8 +537,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 25a5ffbcd124172489661ad82b3d6159, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jumpHeight: 4
-  timeToJumpApex: 0.4
 --- !u!114 &297003488
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -655,11 +654,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1f004d3830471b4399c82b911260a9e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  collisionMask:
-    serializedVersion: 2
-    m_Bits: 0
-  horizontalRayCount: 4
-  verticalRayCount: 4
+  controllerSetting:
+    skinWidth: 0.015
+    horizontalRayCount: 4
+    verticalRayCount: 4
+  controllerPhysics:
+    gravity: -30
+    jumpGravityScale: 1
+    fallGravityScale: 1
+    velocity: {x: 0, y: 0, z: 0}
+    collisions:
+      above: 0
+      below: 0
+      left: 0
+      right: 0
+--- !u!114 &297003494
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 297003486}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bac1fd8cb686d8447b0c7111b02036d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  jumpHeight: 4
 --- !u!1 &1052168256
 GameObject:
   m_ObjectHideFlags: 0

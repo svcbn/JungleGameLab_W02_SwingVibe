@@ -21,11 +21,12 @@ public abstract class PlayerAbility : MonoBehaviour
     public virtual void PreUpdate()
     {
         PreHandleInput();
+        HandleInput();
     }
 
     public virtual void DoUpdate()
     {
-        HandleInput();
+        
     }
 
     public virtual void PostUpdate()
