@@ -2,7 +2,6 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.InputSystem.XR;
 using System;
-using UnityEditor.Experimental.GraphView;
 
 [RequireComponent(typeof(BoxCollider2D))]
 public class Controller2D : MonoBehaviour
@@ -160,7 +159,14 @@ public class Controller2D : MonoBehaviour
 
             if (hit)
             {
-                _originalDeltaPos.x = directionX * (hit.distance - _raycastOrigins.width / 2 - controllerSetting.raycastHorizontalOffset * 2);
+                if (Mathf.Sign(directionX) == Mathf.Sign(controllerPhysics.velocity.x))
+                {
+                    _originalDeltaPos.x = directionX * (hit.distance - _raycastOrigins.width / 2 - controllerSetting.raycastHorizontalOffset * 2);
+                } else
+                {
+                    _originalDeltaPos.x = controllerPhysics.velocity.x * Time.deltaTime;
+                }
+                
 
                 if (directionX == -1)
                 {
