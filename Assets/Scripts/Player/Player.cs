@@ -1,6 +1,8 @@
 using JetBrains.Annotations;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -12,6 +14,8 @@ public class Player : MonoBehaviour
         WALKING,
         WALL_GRAB,
         JUMPING,
+        DIZZY,
+        ROPE,
     }
 
     public enum RopeState
@@ -23,11 +27,12 @@ public class Player : MonoBehaviour
         FAILED,
     }
 
-    public struct Info
+    public class Info
     {
         public State state;
         public RopeState ropeState;
         public bool aimingEnabled;
+        public bool isGrounded;
     }
 
     public Info playerInfo { get; private set; }
@@ -39,6 +44,8 @@ public class Player : MonoBehaviour
     {
         _abilities = new List<PlayerAbility>();
         _abilities.AddRange(gameObject.GetComponents<PlayerAbility>());
+
+        playerInfo = new Info();
     }
 
     void Update()
@@ -80,6 +87,38 @@ public class Player : MonoBehaviour
         if (playerInfo.aimingEnabled)
         {
 
+        }
+    }
+
+    /// <summary>
+    /// Change Player's State
+    /// </summary>
+    /// <param name="_state"></param>
+    public void ChangeState(State _state)
+    {
+        playerInfo.state = _state;
+        switch (_state)
+        {
+            case State.IDLE:
+                // put bool here
+
+                break;
+            case State.JUMPING:
+                // put bool here
+
+                break;
+            case State.WALKING:
+                // put bool here
+
+                break;
+            case State.WALL_GRAB:
+                // put bool here
+
+                break;
+            case State.DIZZY:
+                // put bool here
+
+                break;
         }
     }
 }

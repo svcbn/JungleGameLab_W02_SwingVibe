@@ -13,6 +13,10 @@ public abstract class PlayerAbility : MonoBehaviour
     protected float _horizontalAim;
     protected float _verticalAim;
 
+    protected bool _jumpButtonClicked;
+    protected bool _hookButtonClicked;
+    protected bool _dashButtonClicked;
+
     protected virtual void Awake()
     {
         Init();
@@ -47,6 +51,10 @@ public abstract class PlayerAbility : MonoBehaviour
 
         _horizontalAim = InputManager.Instance.AimHorizontal;
         _verticalAim = InputManager.Instance.AimVertical;
+
+        _jumpButtonClicked = InputManager.Instance.JumpButton;
+        _hookButtonClicked = InputManager.Instance.HookButton;
+        _dashButtonClicked = InputManager.Instance.DashButton;
     }
 
     protected abstract void HandleInput();

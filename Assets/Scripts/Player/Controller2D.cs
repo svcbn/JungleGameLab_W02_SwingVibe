@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.InputSystem.XR;
 using System;
-using UnityEditor.Experimental.GraphView;
+using Unity.VisualScripting;
 
 [RequireComponent(typeof(BoxCollider2D))]
 public class Controller2D : MonoBehaviour
@@ -22,6 +22,8 @@ public class Controller2D : MonoBehaviour
         public bool above, below;
         public bool left, right;
 
+        public Transform aboveTransform, belowTransform, leftTransform, rightTransform;
+
         public void Reset()
         {
             above = below = false;
@@ -33,7 +35,7 @@ public class Controller2D : MonoBehaviour
     public class ControllerPhysics
     {
         [Header("Variables")]
-        [Header("Gravity Settings", order = 2)]
+        [Header("중력 관련 설정")]
         public float gravity = -30f;
         [Range(0f, 2f)]
         public float jumpGravityScale = 1f;
@@ -45,6 +47,8 @@ public class Controller2D : MonoBehaviour
 
         [Header("Detections")]
         public CollisionInfo collisions;
+        [HideInInspector]
+        public CollisionInfo prevCollisions;
     }
 
     [Serializable]
@@ -57,6 +61,10 @@ public class Controller2D : MonoBehaviour
         public float raycastHorizontalError = 0.05f;
         [Range(0f, 0.1f)]
         public float raycastVerticalError = 0.05f;
+        [Range(0f, 0.1f)]
+        public float raycastHorizontalOffset = 0.05f;
+        [Range(0f, 0.1f)]
+        public float raycastVerticalOffset = 0.05f;
     }
 
     [Header("Controller Settings")]
@@ -87,7 +95,7 @@ public class Controller2D : MonoBehaviour
         _collider = GetComponent<BoxCollider2D>();
         CalculateRaySpacing();
         collisionMask = LayerMask.GetMask("Ground");
-        
+
     }
 
     private void Update()
@@ -104,6 +112,7 @@ public class Controller2D : MonoBehaviour
         UpdateRaycastOrigins();
         controllerPhysics.collisions.Reset();
 
+        controllerPhysics.prevCollisions = controllerPhysics.collisions;
         HorizontalCollisions(1);
         HorizontalCollisions(-1);
         VerticalCollisions(1);
@@ -143,7 +152,7 @@ public class Controller2D : MonoBehaviour
 
     void HorizontalCollisions(float directionX)
     {
-        float rayLength = Mathf.Abs(controllerPhysics.velocity.x * Time.deltaTime) + _raycastOrigins.width / 2 + controllerSetting.raycastHorizontalError * 2;
+        float rayLength = Mathf.Abs(controllerPhysics.velocity.x * Time.deltaTime) + _raycastOrigins.width / 2 + controllerSetting.raycastHorizontalOffset * 2;
         Vector2 rayOriginBottom = (_raycastOrigins.bottomLeft + _raycastOrigins.bottomRight) / 2 + ((Vector2)transform.up * controllerSetting.raycastHorizontalError);
         Vector2 rayOriginTop = (_raycastOrigins.topLeft + _raycastOrigins.topRight) / 2 - ((Vector2)transform.up * controllerSetting.raycastHorizontalError);
 
@@ -156,26 +165,42 @@ public class Controller2D : MonoBehaviour
 
             if (hit)
             {
-                _originalDeltaPos.x = directionX * (hit.distance - _raycastOrigins.width / 2 - controllerSetting.raycastHorizontalError * 2);
+                if (Mathf.Sign(directionX) == Mathf.Sign(controllerPhysics.velocity.x))
+                {
+                    _originalDeltaPos.x = directionX * (hit.distance - _raycastOrigins.width / 2 - controllerSetting.raycastHorizontalOffset * 2);
+                } else
+                {
+                    _originalDeltaPos.x = controllerPhysics.velocity.x * Time.deltaTime;
+                }
+
 
                 if (directionX == -1)
                 {
                     controllerPhysics.collisions.left = true;
+                    controllerPhysics.collisions.leftTransform = hit.transform;
                 } else
                 {
                     controllerPhysics.collisions.right = true;
+                    controllerPhysics.collisions.rightTransform = hit.transform;
                 }
             } else
             {
                 if (directionX == -1)
                 {
                     controllerPhysics.collisions.left = false;
+                    controllerPhysics.collisions.leftTransform = null;
                 }
                 else
                 {
                     controllerPhysics.collisions.right = false;
+                    controllerPhysics.collisions.rightTransform = null;
                 }
             }
+
+            Platform targetPlatform = controllerPhysics.collisions.leftTransform ? controllerPhysics.collisions.leftTransform.GetComponent<Platform>() : null;
+            CallPlatformCollisionCallback(controllerPhysics.prevCollisions.left, controllerPhysics.collisions.left, targetPlatform);
+            targetPlatform = controllerPhysics.collisions.rightTransform ? controllerPhysics.collisions.rightTransform.GetComponent<Platform>() : null;
+            CallPlatformCollisionCallback(controllerPhysics.prevCollisions.right, controllerPhysics.collisions.right, targetPlatform);
         }
     }
 
@@ -207,19 +232,49 @@ public class Controller2D : MonoBehaviour
                 if (directionY == -1)
                 {
                     controllerPhysics.collisions.below = true;
+                    controllerPhysics.collisions.belowTransform = hit.transform;
                 } else
                 {
                     controllerPhysics.collisions.above = true;
+                    controllerPhysics.collisions.aboveTransform = hit.transform;
                 }
             } else
             {
                 if (directionY == -1)
                 {
                     controllerPhysics.collisions.below = false;
+                    controllerPhysics.collisions.belowTransform = null;
                 }
                 else
                 {
                     controllerPhysics.collisions.above = false;
+                    controllerPhysics.collisions.aboveTransform = null;
+                }
+            }
+
+            Platform targetPlatform = controllerPhysics.collisions.aboveTransform ? controllerPhysics.collisions.aboveTransform.GetComponent<Platform>() : null;
+            CallPlatformCollisionCallback(controllerPhysics.prevCollisions.above, controllerPhysics.collisions.above, targetPlatform);
+            targetPlatform = controllerPhysics.collisions.belowTransform ? controllerPhysics.collisions.belowTransform.GetComponent<Platform>() : null;
+            CallPlatformCollisionCallback(controllerPhysics.prevCollisions.below, controllerPhysics.collisions.below, targetPlatform);
+        }
+    }
+
+    void CallPlatformCollisionCallback(bool prevCollision, bool collision, Platform targetPlatform)
+    {
+        if (prevCollision != collision)
+        {
+            if (collision)
+            {
+                if (targetPlatform != null)
+                {
+                    targetPlatform.OnPlayerHit(GetComponent<Player>());
+                }
+            }
+            else
+            {
+                if (targetPlatform != null)
+                {
+                    targetPlatform.OnPlayerExit(GetComponent<Player>());
                 }
             }
         }
