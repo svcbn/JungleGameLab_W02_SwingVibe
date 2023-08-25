@@ -1,6 +1,8 @@
 using JetBrains.Annotations;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -42,6 +44,8 @@ public class Player : MonoBehaviour
     {
         _abilities = new List<PlayerAbility>();
         _abilities.AddRange(gameObject.GetComponents<PlayerAbility>());
+
+        playerInfo = new Info();
     }
 
     void Update()
