@@ -29,6 +29,9 @@ public class Controller2D : MonoBehaviour
             above = below = false;
             left = right = false;
         }
+
+        public Vector2 moveAmountOld;
+
     }
 
     [Serializable]
@@ -81,6 +84,7 @@ public class Controller2D : MonoBehaviour
             return controllerPhysics.collisions.below;
         }
     }
+
 
     private LayerMask collisionMask;
     private float _horizontalRaySpacing;
@@ -143,6 +147,17 @@ public class Controller2D : MonoBehaviour
         bool isFalling = controllerPhysics.velocity.y < 0;
         float gravity = controllerPhysics.gravity * (isFalling ? controllerPhysics.fallGravityScale : controllerPhysics.jumpGravityScale);
         controllerPhysics.velocity.y += gravity * Time.deltaTime;
+    }
+
+    public void Move(Vector2 moveAmount, float minHeight = 0f, float maxHeight = 0f)
+    {
+        this.UpdateRaycastOrigins();
+        this.controllerPhysics.collisions.Reset();
+        this.controllerPhysics.collisions.moveAmountOld = moveAmount;
+
+        bool below = this.controllerPhysics.collisions.below;
+        transform.Translate(moveAmount);
+        Debug.Log("x: " + moveAmount.x + "y: " + moveAmount.y);
     }
 
     void ReadyForRaycast()

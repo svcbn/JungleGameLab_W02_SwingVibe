@@ -717,11 +717,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 25a5ffbcd124172489661ad82b3d6159, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetVelocityX: 0
-  _moveSpeed: 12
-  velocityXSmoothing: 0
-  accelerationTimeAirborne: 0.2
-  accelerationTimeGrounded: 0.2
+  maxMoveSpeed: 6
+  accelerationOnAir: 2
+  accelerationOnGround: 2
+  decelerationOnAir: 2
+  decelerationOnGround: 2
+  decelerationMaxSpeedOnAir: 2
+  decelerationMaxSpeedOnGround: 2
+  penaltySpeedDizzy: 0.8
+  penaltySpeedWalk: 0.6
+  penaltySpeedRope: 0.6
 --- !u!114 &297003488
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -839,13 +844,39 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1f004d3830471b4399c82b911260a9e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  collisionMask:
-    serializedVersion: 2
-    m_Bits: 0
-  horizontalRayCount: 4
-  verticalRayCount: 4
-  gravity: -35
-  velocity: {x: 0, y: 0, z: 0}
+  controllerSetting:
+    skinWidth: 0.015
+    horizontalRayCount: 4
+    verticalRayCount: 4
+    raycastHorizontalError: 0.05
+    raycastVerticalError: 0.05
+    raycastHorizontalOffset: 0.05
+    raycastVerticalOffset: 0.05
+  controllerPhysics:
+    gravity: -30
+    jumpGravityScale: 0.8
+    fallGravityScale: 1.2
+    velocity: {x: 0, y: 0, z: 0}
+    collisions:
+      above: 0
+      below: 0
+      left: 0
+      right: 0
+      aboveTransform: {fileID: 0}
+      belowTransform: {fileID: 0}
+      leftTransform: {fileID: 0}
+      rightTransform: {fileID: 0}
+      moveAmountOld: {x: 0, y: 0}
+    prevCollisions:
+      above: 0
+      below: 0
+      left: 0
+      right: 0
+      aboveTransform: {fileID: 0}
+      belowTransform: {fileID: 0}
+      leftTransform: {fileID: 0}
+      rightTransform: {fileID: 0}
+      moveAmountOld: {x: 0, y: 0}
 --- !u!114 &297003494
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -858,7 +889,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bac1fd8cb686d8447b0c7111b02036d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jumpHeight: 3.5
+  jumpHeight: 10
 --- !u!50 &297003495
 Rigidbody2D:
   serializedVersion: 4
@@ -895,7 +926,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &462632687
 Transform:
   m_ObjectHideFlags: 0
@@ -1127,7 +1158,8 @@ MonoBehaviour:
   desPos: {fileID: 1352356350}
   startPos: {fileID: 1171178475}
   endPos: {fileID: 1506058781}
-  speed: 0
+  upSpeed: 0
+  downSpeed: 0
 --- !u!212 &952958329
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -1408,7 +1440,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1565371681
 Transform:
   m_ObjectHideFlags: 0
