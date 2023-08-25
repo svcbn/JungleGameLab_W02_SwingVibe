@@ -10,8 +10,9 @@ namespace W02
     {
         Vector3 velocity;
         float targetVelocityX;
-        float _moveSpeed = 6f;
         float velocityXSmoothing;
+
+        float moveSpeed = 6f;
         public float jumpHeight = 4;
         public float timeToJumpApex = 0.4f;
         float accelerationTimeAirborne = 0.2f;
@@ -28,7 +29,7 @@ namespace W02
 
         protected override void HandleInput()
         {
-            targetVelocityX = _horizontalMove * _moveSpeed;
+            targetVelocityX = _horizontalMove * moveSpeed;
             velocity.x = Mathf.SmoothDamp(velocity.x, targetVelocityX, ref velocityXSmoothing, (controller.collisions.below) ? accelerationTimeGrounded : accelerationTimeAirborne);
 
             controller.Move(velocity * Time.deltaTime);
