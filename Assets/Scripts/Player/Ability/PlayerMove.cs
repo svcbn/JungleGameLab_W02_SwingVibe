@@ -36,7 +36,7 @@ namespace W02
                         _controller.controllerPhysics.velocity.x,
                         currentVelocityX,
                         ref velocityXSmoothing,
-                        (_controller.collisions.below) ? accelerationTimeOnGround : accelerationTimeOnAir
+                        (_controller.controllerPhysics.collisions.below) ? accelerationTimeOnGround : accelerationTimeOnAir
                     )
                 );
             CalculateVelocity();
