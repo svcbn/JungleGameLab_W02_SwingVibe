@@ -20,10 +20,10 @@ namespace W02
             targetVelocityX = _horizontalMove * _moveSpeed;
             _controller.SetXVelocity(
                 Mathf.SmoothDamp(
-                        _controller.velocity.x, 
+                        _controller.controllerPhysics.velocity.x, 
                         targetVelocityX, 
                         ref velocityXSmoothing, 
-                        (_controller.collisions.below) ? accelerationTimeGrounded : accelerationTimeAirborne
+                        (_controller.controllerPhysics.collisions.below) ? accelerationTimeGrounded : accelerationTimeAirborne
                     )
                 );
         }
