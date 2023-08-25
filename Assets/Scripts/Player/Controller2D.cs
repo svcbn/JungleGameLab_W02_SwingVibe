@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using UnityEngine.InputSystem.XR;
+using System;
 
 [RequireComponent(typeof(BoxCollider2D))]
 public class Controller2D : MonoBehaviour
@@ -157,6 +158,7 @@ public class Controller2D : MonoBehaviour
         public Vector2 bottomLeft, bottomRight;
     }
 
+    [Serializable]
     public struct CollisionInfo
     {
         public bool above, below;
