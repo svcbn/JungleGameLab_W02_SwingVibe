@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.InputSystem.XR;
 
 [RequireComponent(typeof(BoxCollider2D))]
 public class Controller2D : MonoBehaviour
@@ -10,6 +11,10 @@ public class Controller2D : MonoBehaviour
     const float skinWidth = .015f;
     public int horizontalRayCount = 4;
     public int verticalRayCount = 4;
+    public float gravity = -30f;
+    float jumpHeight = 4;
+    float timeToJumpApex = 0.4f;
+    public Vector3 velocity = Vector3.zero;
 
     float horizontalRaySpacing;
     float verticalRaySpacing;
@@ -21,13 +26,21 @@ public class Controller2D : MonoBehaviour
 
     void Start()
     {
+        Rigidbody rigidbody = GetComponent<Rigidbody>();
         collider = GetComponent<BoxCollider2D>();
         CalculateRaySpacing();
         collisionMask = LayerMask.GetMask("Ground");
     }
 
-    public void Move(Vector3 velocity)
+    private void Update()
     {
+        UpdateController();
+    }
+
+    void UpdateController()
+    {
+        ApplyGravity();
+
         UpdateRaycastOrigins();
         collisions.Reset();
 
@@ -40,13 +53,36 @@ public class Controller2D : MonoBehaviour
             VerticalCollisions(ref velocity);
         }
 
-        transform.Translate(velocity);
+        transform.Translate(velocity * Time.deltaTime);
+    }
+
+    public void Move(Vector3 velocity)
+    {
+        this.velocity = velocity;
+    }
+
+    public void SetXVelocity(float xVelocity)
+    {
+        this.velocity.x = xVelocity;
+    }
+
+    public void SetYVelocity(float yVelocity)
+    {
+        this.velocity.y = yVelocity;
+    }
+
+    void ApplyGravity()
+    {
+        if (!collisions.below)
+        {
+            velocity.y += gravity * Time.deltaTime;
+        }
     }
 
     void HorizontalCollisions(ref Vector3 velocity)
     {
         float directionX = Mathf.Sign(velocity.x);
-        float rayLength = Mathf.Abs(velocity.x) + skinWidth;
+        float rayLength = Mathf.Abs(velocity.x * Time.deltaTime) + skinWidth;
 
         for (int i = 0; i < horizontalRayCount; i++)
         {
@@ -70,7 +106,7 @@ public class Controller2D : MonoBehaviour
     void VerticalCollisions(ref Vector3 velocity)
     {
         float directionY = Mathf.Sign(velocity.y);
-        float rayLength = Mathf.Abs(velocity.y) + skinWidth;
+        float rayLength = Mathf.Abs(velocity.y * Time.deltaTime) + skinWidth;
 
         for (int i = 0; i < verticalRayCount; i++)
         {
