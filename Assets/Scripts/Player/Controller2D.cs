@@ -57,6 +57,10 @@ public class Controller2D : MonoBehaviour
         public float raycastHorizontalError = 0.05f;
         [Range(0f, 0.1f)]
         public float raycastVerticalError = 0.05f;
+        [Range(0f, 0.1f)]
+        public float raycastHorizontalOffset = 0.05f;
+        [Range(0f, 0.1f)]
+        public float raycastVerticalOffset = 0.05f;
     }
 
     [Header("Controller Settings")]
@@ -143,7 +147,7 @@ public class Controller2D : MonoBehaviour
 
     void HorizontalCollisions(float directionX)
     {
-        float rayLength = Mathf.Abs(controllerPhysics.velocity.x * Time.deltaTime) + _raycastOrigins.width / 2 + controllerSetting.raycastHorizontalError * 2;
+        float rayLength = Mathf.Abs(controllerPhysics.velocity.x * Time.deltaTime) + _raycastOrigins.width / 2 + controllerSetting.raycastHorizontalOffset * 2;
         Vector2 rayOriginBottom = (_raycastOrigins.bottomLeft + _raycastOrigins.bottomRight) / 2 + ((Vector2)transform.up * controllerSetting.raycastHorizontalError);
         Vector2 rayOriginTop = (_raycastOrigins.topLeft + _raycastOrigins.topRight) / 2 - ((Vector2)transform.up * controllerSetting.raycastHorizontalError);
 
@@ -156,7 +160,7 @@ public class Controller2D : MonoBehaviour
 
             if (hit)
             {
-                _originalDeltaPos.x = directionX * (hit.distance - _raycastOrigins.width / 2 - controllerSetting.raycastHorizontalError * 2);
+                _originalDeltaPos.x = directionX * (hit.distance - _raycastOrigins.width / 2 - controllerSetting.raycastHorizontalOffset * 2);
 
                 if (directionX == -1)
                 {
