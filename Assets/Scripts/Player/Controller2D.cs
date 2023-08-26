@@ -476,6 +476,7 @@ public class Controller2D : MonoBehaviour
             //움직임 벡터
             Debug.DrawRay(playerPosition, playerMoveVector, Color.black);
             velocity = playerMoveVector;
+            controllerPhysics.velocity = velocity;
         }
     }
 }

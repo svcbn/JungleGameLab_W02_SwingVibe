@@ -36,11 +36,13 @@ public class PlayerRopeSwing : PlayerAbility
         }
 
         //로프 실패
-        if (!_hookButtonClicked)
+        if (_player.playerInfo.ropeState == Player.RopeState.HOLDING && !_hookButtonClicked)
         {
             rope.ChainReset();
             _player.playerInfo.ropeState = Player.RopeState.FAILED;
             _player.ChangeState(Player.State.IDLE);
+
+            _controller.SetXVelocity(0);
         }
     }
 
