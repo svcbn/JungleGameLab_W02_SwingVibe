@@ -9,37 +9,42 @@ namespace W02
     [RequireComponent(typeof(Controller2D))]
     public class PlayerMove : PlayerAbility
     {
+
+
         float currentVelocityX;
         float velocityXSmoothing;
 
         [Header("Player 속성")]
         [SerializeField][Tooltip("최대 속력")] float maxMoveSpeed = 6f;
-        [SerializeField][Tooltip("공중 가속 시간")] float accelerationTimeOnAir = 0.2f;
-        [SerializeField][Tooltip("지상 가속 시간")] float accelerationTimeOnGround = 0.2f;
-        [SerializeField][Tooltip("공중 감속 시간")] float decelerationTimeOnAir = 0.2f;
-        [SerializeField][Tooltip("지상 감속 시간")] float decelerationTimeOnGround = 0.2f;
-        [SerializeField][Tooltip("공중 감속 속도 / 합연산")] float decelerationTimeOverSpeedOnAir = 0.2f;
-        [SerializeField][Tooltip("지상 감속 속도 / 합연산")] float decelerationTimeOverSpeedOnGround = 0.2f;
+        [SerializeField][Tooltip("공중 가속")] float accelerationOnAir = 0.2f;
+        [SerializeField][Tooltip("지상 가속")] float accelerationOnGround = 0.2f;
+        [SerializeField][Tooltip("공중 감속")] float decelerationOnAir = 0.2f;
+        [SerializeField][Tooltip("지상 감속")] float decelerationOnGround = 0.2f;
+        [SerializeField][Tooltip("최대 속도 공중 감속 / 합연산")] float decelerationMaxSpeedOnAir = 0.2f;
+        [SerializeField][Tooltip("최대 속도 지상 감속 / 합연산")] float decelerationMaxSpeedOnGround = 0.2f;
         [SerializeField][Tooltip("피격될 때 속도 감소치 / 곱연산")] float penaltySpeedDizzy = 0.8f;
         [SerializeField][Tooltip("걸어다닐때 속도 감소치 / 곱연산")] float penaltySpeedWalk = 0.6f;
         [SerializeField][Tooltip("로프 걸때 속도 감소치 / 곱연산")] float penaltySpeedRope = 0.6f;
-
-
 
         float moveSpeed = 6f;
 
         protected override void HandleInput()
         {
-            currentVelocityX = _horizontalMove * moveSpeed;
-            _controller.SetXVelocity(
-                Mathf.SmoothDamp(
-                        _controller.controllerPhysics.velocity.x,
-                        currentVelocityX,
-                        ref velocityXSmoothing,
-                        (_controller.controllerPhysics.collisions.below) ? accelerationTimeOnGround : accelerationTimeOnAir
-                    )
-                );
-            CalculateVelocity();
+            //currentVelocityX = _horizontalMove * moveSpeed;
+            //_controller.SetXVelocity(
+            //    Mathf.SmoothDamp(
+            //            _controller.controllerPhysics.velocity.x,
+            //            currentVelocityX,
+            //            ref velocityXSmoothing,
+            //            (_controller.controllerPhysics.collisions.below) ? accelerationTimeOnGround : accelerationTimeOnAir
+            //        )
+            //    );
+            
+            
+            this.CalculateVelocity();
+            _controller.SetXVelocity(currentVelocityX);
+            Debug.Log("velocityX :" + currentVelocityX);
+            //this.MoveMent();
         }
 
         /// <summary>
@@ -55,9 +60,9 @@ namespace W02
             int currentXDirection = RoundNormalize(currentVelocityX);
             bool isFasterThanMaxSpeed = Mathf.Abs(currentVelocityX) > maxMoveSpeed;
             float targetMaxSpeed = MaxSpeedSetting(_player.playerInfo.state);
-            float decelerationSpeed = _player.playerInfo.isGrounded ? decelerationTimeOverSpeedOnGround : decelerationTimeOverSpeedOnAir;
-            float decelerationTime = _player.playerInfo.isGrounded ? decelerationTimeOnGround : decelerationTimeOnAir;
-            float accelerationTime = _player.playerInfo.isGrounded ? accelerationTimeOnGround : accelerationTimeOnAir;
+            float decelerationWhenMaxSpeed = _player.playerInfo.isGrounded ? decelerationMaxSpeedOnGround : decelerationMaxSpeedOnAir;
+            float deceleration = _player.playerInfo.isGrounded ? decelerationOnGround : decelerationOnAir;
+            float acceleration = _player.playerInfo.isGrounded ? accelerationOnGround : accelerationOnAir;
 
             if (currentXDirection == 1)
             {
@@ -65,7 +70,7 @@ namespace W02
                 {
                     if (!isFasterThanMaxSpeed)
                     {
-                        currentVelocityX += accelerationTime * Time.deltaTime;
+                        currentVelocityX += acceleration * Time.deltaTime;
 
                         if (currentVelocityX > maxMoveSpeed)
                         {
@@ -75,11 +80,11 @@ namespace W02
                 }
                 else if (xInputDirection == -1)
                 {
-                    currentVelocityX -= accelerationTime * Time.deltaTime;
+                    currentVelocityX -= acceleration * Time.deltaTime;
                 }
                 else
                 {
-                    currentVelocityX -= decelerationTime * Time.deltaTime;
+                    currentVelocityX -= deceleration * Time.deltaTime;
                     if (currentVelocityX < 0f)
                     {
                         currentVelocityX = 0f;
@@ -87,7 +92,7 @@ namespace W02
                 }
                 if (isFasterThanMaxSpeed)
                 {
-                    currentVelocityX -= decelerationSpeed * Time.deltaTime;
+                    currentVelocityX -= decelerationWhenMaxSpeed * Time.deltaTime;
                 }
             }
             else if (currentXDirection == -1)
@@ -96,7 +101,7 @@ namespace W02
                 {
                     if (!isFasterThanMaxSpeed)
                     {
-                        currentVelocityX -= accelerationTime * Time.deltaTime;
+                        currentVelocityX -= acceleration * Time.deltaTime;
                         if (currentVelocityX < -maxMoveSpeed)
                         {
                             currentVelocityX = maxMoveSpeed;
@@ -105,11 +110,11 @@ namespace W02
                 }
                 else if (xInputDirection == 1)
                 {
-                    currentVelocityX += accelerationTime * Time.deltaTime;
+                    currentVelocityX += acceleration * Time.deltaTime;
                 }
                 else
                 {
-                    currentVelocityX += decelerationTime * Time.deltaTime;
+                    currentVelocityX += deceleration * Time.deltaTime;
                     if (currentVelocityX > 0f)
                     {
                         currentVelocityX = 0f;
@@ -117,7 +122,7 @@ namespace W02
                 }
                 if (isFasterThanMaxSpeed)
                 {
-                    currentVelocityX += decelerationSpeed * Time.deltaTime;
+                    currentVelocityX += decelerationWhenMaxSpeed * Time.deltaTime;
                 }
             }
             else if (currentXDirection == -1)
@@ -126,7 +131,7 @@ namespace W02
                 {
                     if (!isFasterThanMaxSpeed)
                     {
-                        currentVelocityX -= accelerationTime * Time.deltaTime;
+                        currentVelocityX -= acceleration * Time.deltaTime;
                         if (currentVelocityX < -targetMaxSpeed)
                         {
                             currentVelocityX = -targetMaxSpeed;
@@ -135,11 +140,11 @@ namespace W02
                 }
                 else if (xInputDirection == 1)
                 {
-                    currentVelocityX += accelerationTime * Time.deltaTime;
+                    currentVelocityX += acceleration * Time.deltaTime;
                 }
                 else
                 {
-                    currentVelocityX += decelerationTime * Time.deltaTime;
+                    currentVelocityX += deceleration * Time.deltaTime;
                     if (currentVelocityX > 0f)
                     {
                         currentVelocityX = 0f;
@@ -147,12 +152,12 @@ namespace W02
                 }
                 if (isFasterThanMaxSpeed)
                 {
-                    currentVelocityX += decelerationSpeed * Time.deltaTime;
+                    currentVelocityX += decelerationWhenMaxSpeed * Time.deltaTime;
                 }
             }
             else if (xInputDirection == -1)
             {
-                currentVelocityX -= accelerationTime * Time.deltaTime;
+                currentVelocityX -= acceleration * Time.deltaTime;
                 if (currentVelocityX < -targetMaxSpeed)
                 {
                     currentVelocityX = -targetMaxSpeed;
@@ -160,7 +165,7 @@ namespace W02
             }
             else if (xInputDirection == 1)
             {
-                currentVelocityX += accelerationTime * Time.deltaTime;
+                currentVelocityX += acceleration * Time.deltaTime;
                 if (currentVelocityX > targetMaxSpeed)
                 {
                     currentVelocityX = targetMaxSpeed;
@@ -168,6 +173,17 @@ namespace W02
             }
         }
 
+
+        void MoveMent()
+        {
+            Vector2 vector = Vector2.right * currentVelocityX * Time.deltaTime;
+            this.Move(vector, 0, 0);
+        }
+
+        void Move(Vector2 moveAmount, float _minHeight = 0, float _maxHeight = 0)
+        {
+            this._controller.Move(moveAmount, _minHeight, _maxHeight);
+        }
 
         /// <summary>
         /// Returns targetMaxSpeed based on player's state
