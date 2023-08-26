@@ -11,7 +11,7 @@ namespace W02
     {
 
 
-        float currentVelocityX;
+        float currentVelocityX = 0;
         float velocityXSmoothing;
 
         [Header("최대 속력")][SerializeField] float maxMoveSpeed = 6f;
@@ -49,31 +49,31 @@ namespace W02
 
             int xInputDirection = RoundNormalize(InputManager.Instance.MoveHorizontal);
             int currentXDirection = RoundNormalize(currentVelocityX);
-            bool isFasterThanMaxSpeed = Mathf.Abs(currentVelocityX) > maxMoveSpeed;
             float targetMaxSpeed = MaxSpeedSetting(_player.playerInfo.state);
+            bool isFasterThanMaxSpeed = Mathf.Abs(currentVelocityX) > targetMaxSpeed;
             float decelerationWhenMaxSpeed = _controller.IsOnGround ? decelerationMaxSpeedOnGround : decelerationMaxSpeedOnAir;
             float deceleration = _controller.IsOnGround ? decelerationOnGround : decelerationOnAir;
             float acceleration = _controller.IsOnGround ? accelerationOnGround : accelerationOnAir;
 
-            if (currentXDirection == 1)
+            if (currentXDirection == 1) // 현재진행방향 ->
             {
-                if (xInputDirection == 1)
+                if (xInputDirection == 1) // 입력방향 ->
                 {
-                    if (!isFasterThanMaxSpeed)
+                    if (!isFasterThanMaxSpeed) 
                     {
                         currentVelocityX += acceleration * Time.deltaTime;
 
-                        if (currentVelocityX > maxMoveSpeed)
+                        if (currentVelocityX > targetMaxSpeed)
                         {
-                            currentVelocityX = maxMoveSpeed;
+                            currentVelocityX = targetMaxSpeed;
                         }
                     }
                 }
-                else if (xInputDirection == -1)
+                else if (xInputDirection == -1) // 입력방향 <-
                 {
                     currentVelocityX -= acceleration * Time.deltaTime;
                 }
-                else
+                else // 입력 0
                 {
                     currentVelocityX -= deceleration * Time.deltaTime;
                     if (currentVelocityX < 0f)
@@ -86,39 +86,9 @@ namespace W02
                     currentVelocityX -= decelerationWhenMaxSpeed * Time.deltaTime;
                 }
             }
-            else if (currentXDirection == -1)
+            else if (currentXDirection == -1) // 현재진행방향 <-
             {
-                if (xInputDirection == -1)
-                {
-                    if (!isFasterThanMaxSpeed)
-                    {
-                        currentVelocityX -= acceleration * Time.deltaTime;
-                        if (currentVelocityX < -maxMoveSpeed)
-                        {
-                            currentVelocityX = maxMoveSpeed;
-                        }
-                    }
-                }
-                else if (xInputDirection == 1)
-                {
-                    currentVelocityX += acceleration * Time.deltaTime;
-                }
-                else
-                {
-                    currentVelocityX += deceleration * Time.deltaTime;
-                    if (currentVelocityX > 0f)
-                    {
-                        currentVelocityX = 0f;
-                    }
-                }
-                if (isFasterThanMaxSpeed)
-                {
-                    currentVelocityX += decelerationWhenMaxSpeed * Time.deltaTime;
-                }
-            }
-            else if (currentXDirection == -1)
-            {
-                if (xInputDirection == -1)
+                if (xInputDirection == -1) // 입력방향 <-
                 {
                     if (!isFasterThanMaxSpeed)
                     {
@@ -129,11 +99,11 @@ namespace W02
                         }
                     }
                 }
-                else if (xInputDirection == 1)
+                else if (xInputDirection == 1) // 입력방향 ->
                 {
                     currentVelocityX += acceleration * Time.deltaTime;
                 }
-                else
+                else // 입력 0
                 {
                     currentVelocityX += deceleration * Time.deltaTime;
                     if (currentVelocityX > 0f)
