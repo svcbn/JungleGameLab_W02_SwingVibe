@@ -22,7 +22,7 @@ public class PlayerRopeWarp : PlayerAbility
     /// <returns></returns>
     Vector2 SetTargetPos()
     {
-        Debug.Log(_horizontalAim + " , " + _verticalAim);
+        
 
         return new Vector2(-5, 5);
     }
