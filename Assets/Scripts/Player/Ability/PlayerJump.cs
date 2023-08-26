@@ -13,7 +13,13 @@ public class PlayerJump : PlayerAbility
     {
         if (_controller.IsOnGround && InputManager.Instance.JumpButton) // 바닥에 있을 때만 점프 가능
         {
+            _player.playerInfo.isJumping = true;
             _controller.SetYVelocity(jumpHeight);
+        }
+
+        if (_player.playerInfo.isJumping && !_controller.WasOnGound && !_controller.IsOnGround)
+        {
+            _player.playerInfo.isJumping = false;
         }
     }
 }
