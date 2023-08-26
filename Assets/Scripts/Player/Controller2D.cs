@@ -508,7 +508,7 @@ public class Controller2D : MonoBehaviour
         _verticalRaySpacing = bounds.size.x / (controllerSetting.verticalRayCount - 1);
     }
 
-    public void CalculateRopeSwinging(ref Chain rope, Vector2 playerPosition, float ropeSpeed)
+    public void CalculateRopeSwinging(ref Chain rope, Vector2 playerPosition)
     {
         Vector2 velocity = controllerPhysics.velocity;
         Chain.ChainNode lastRopeNode = rope.nodes[rope.chainMaxCount - 1];
@@ -523,6 +523,7 @@ public class Controller2D : MonoBehaviour
                 playerMoveVector = -playerMoveVector;
             else if (velocity.x == 0)
             {
+                return;
                 if (playerPosition.x < lastRopeNode.position.x)
                 {//¿À¸¥ÂÊ ³«ÇÏ
                     playerMoveVector = playerMoveVector;
@@ -532,13 +533,14 @@ public class Controller2D : MonoBehaviour
                     playerMoveVector = -playerMoveVector;
 
             }
-            Vector3 nextMovePoint = (Vector3)playerPosition + playerMoveVector * ropeSpeed * 0.1f;
+            Vector3 nextMovePoint = (Vector3)playerPosition + playerMoveVector * velocity.x * 0.01f;
             Vector2 nextMovePointToOriginChainNode = rope.chainMaxLength * (lastRopeNode.position - (Vector2)nextMovePoint).normalized;
             playerMoveVector = -nextMovePointToOriginChainNode + (Vector2)toOriginChainNode;
             //¿òÁ÷ÀÓ º¤ÅÍ
             Debug.DrawRay(playerPosition, playerMoveVector, Color.black);
-            velocity = playerMoveVector;
-            controllerPhysics.velocity = velocity;
+            velocity += ((Vector2)playerMoveVector).normalized;
+            SetXVelocity(velocity.x);
+            //SetYVelocity(velocity.y);
         }
     }
 }
