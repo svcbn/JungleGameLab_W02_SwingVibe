@@ -43,7 +43,7 @@ namespace W02
             
             this.CalculateVelocity();
             _controller.SetXVelocity(currentVelocityX);
-            Debug.Log("velocityX :" + currentVelocityX);
+            //Debug.Log("velocityX :" + currentVelocityX);
             //this.MoveMent();
         }
 
@@ -60,6 +60,8 @@ namespace W02
             int currentXDirection = RoundNormalize(currentVelocityX);
             bool isFasterThanMaxSpeed = Mathf.Abs(currentVelocityX) > maxMoveSpeed;
             float targetMaxSpeed = MaxSpeedSetting(_player.playerInfo.state);
+
+            Debug.Log(_player.playerInfo.isGrounded);
             float decelerationWhenMaxSpeed = _player.playerInfo.isGrounded ? decelerationMaxSpeedOnGround : decelerationMaxSpeedOnAir;
             float deceleration = _player.playerInfo.isGrounded ? decelerationOnGround : decelerationOnAir;
             float acceleration = _player.playerInfo.isGrounded ? accelerationOnGround : accelerationOnAir;
