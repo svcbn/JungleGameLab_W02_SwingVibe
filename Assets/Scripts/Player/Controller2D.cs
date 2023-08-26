@@ -22,10 +22,14 @@ public class Controller2D : MonoBehaviour
         public bool above, below;
         public bool left, right;
         public bool wasOnGround;
+        public bool wasAtCeiling;
+        public float faceDir;
 
         public Transform aboveTransform, belowTransform, leftTransform, rightTransform;
         public GameObject[] belowObjects;
-        public GameObject standingOn;
+        public GameObject belowObj;
+        public GameObject[] aboveObjects;
+        public GameObject aboveObj;
 
         public void Reset()
         {
@@ -137,6 +141,7 @@ public class Controller2D : MonoBehaviour
         HorizontalCollisions(1);
         HorizontalCollisions(-1);
         BelowCollision();
+        AboveCollison();
 
         transform.Translate(_deltaPos, Space.Self);
         Debug.Log(_deltaPos);
@@ -175,6 +180,7 @@ public class Controller2D : MonoBehaviour
     {
         _deltaPos = controllerPhysics.velocity * Time.deltaTime;
         controllerPhysics.collisions.wasOnGround = controllerPhysics.collisions.below;
+        controllerPhysics.collisions.wasAtCeiling = controllerPhysics.collisions.above;
     }
 
     void HorizontalCollisions(float directionX)
@@ -298,7 +304,7 @@ public class Controller2D : MonoBehaviour
 
         if (hasCollision)
         {
-            controllerPhysics.collisions.standingOn = controllerPhysics.collisions.belowObjects[minDistanceIdx];
+            controllerPhysics.collisions.belowObj = controllerPhysics.collisions.belowObjects[minDistanceIdx];
             _player.playerInfo.isFalling = false;
             controllerPhysics.collisions.below = true;
 
@@ -379,6 +385,62 @@ public class Controller2D : MonoBehaviour
         {
             _deltaPos.y = -Mathf.Abs(stickHit.point.y - rayOriginY) + _raycastOrigins.height / 2;
             controllerPhysics.collisions.below = true;
+        }
+    }
+
+    void AboveCollison()
+    {
+        RaycastHit2D[] rayHits = new RaycastHit2D[controllerSetting.verticalRayCount];
+        controllerPhysics.collisions.aboveObjects = new GameObject[controllerSetting.verticalRayCount];
+
+        float rayLength = _raycastOrigins.height / 2 + (IsOnGround ? controllerSetting.raycastVerticalOffset : _deltaPos.y);
+
+        Vector2 rayOriginLeft = (_raycastOrigins.bottomLeft + _raycastOrigins.topLeft) / 2;
+        rayOriginLeft += (Vector2)transform.right * _deltaPos.x;
+
+        Vector2 rayOriginRight = (_raycastOrigins.bottomRight + _raycastOrigins.topRight) / 2;
+        rayOriginRight += (Vector2)transform.right * _deltaPos.x;
+
+        float minDistance = float.MaxValue;
+        int minDistanceIdx = 0;
+        bool hasCollision = false;
+        for (int i = 0; i < controllerSetting.verticalRayCount; i++)
+        {
+            Vector2 rayOrigin = Vector2.Lerp(rayOriginLeft, rayOriginRight, (float)i / (float)(controllerSetting.verticalRayCount - 1));
+
+            rayHits[i] = RaycastWithDebug(rayOrigin, transform.up, rayLength, collisionMask, new Color(0.6f, 0.3f, 0.3f, 1));
+
+            if (rayHits[i])
+            {
+                hasCollision = true;
+
+                controllerPhysics.collisions.aboveObjects[i] = rayHits[i].collider.gameObject;
+                if (rayHits[i].distance < minDistance)
+                {
+                    minDistance = rayHits[i].distance;
+                    minDistanceIdx = i;
+                }
+            }
+        }
+
+        if (hasCollision)
+        {
+            Debug.Log(controllerPhysics.collisions.aboveObjects[minDistanceIdx]);
+            _deltaPos.y = minDistance - _raycastOrigins.height / 2;
+            controllerPhysics.collisions.aboveObj = controllerPhysics.collisions.aboveObjects[minDistanceIdx];
+            controllerPhysics.collisions.above = true;
+
+            if (IsOnGround && _deltaPos.y < 0)
+            {
+                _deltaPos.y = 0;
+            }
+
+            controllerPhysics.velocity.y = 0;
+            controllerPhysics.externalForce.y = 0;
+        }
+        else
+        {
+            controllerPhysics.collisions.above = false;
         }
     }
 
