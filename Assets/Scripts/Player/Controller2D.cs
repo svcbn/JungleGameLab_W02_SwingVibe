@@ -32,9 +32,6 @@ public class Controller2D : MonoBehaviour
             above = below = false;
             left = right = false;
         }
-
-        public Vector2 moveAmountOld;
-
     }
 
     [Serializable]
@@ -45,7 +42,7 @@ public class Controller2D : MonoBehaviour
         public float epsilon = 0.0001f;
         public Vector2 maxVelocity = new Vector2(100f, 100f);
 
-        [Header("ï¿½ß·ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½")]
+        [Header("Áß·Â °ü·Ã ¼³Á¤")]
         public float gravity = -30f;
         [Range(0f, 2f)]
         public float jumpGravityScale = 1f;
@@ -172,17 +169,6 @@ public class Controller2D : MonoBehaviour
         bool isFalling = controllerPhysics.velocity.y < 0;
         float gravity = controllerPhysics.gravity * (isFalling ? controllerPhysics.fallGravityScale : controllerPhysics.jumpGravityScale);
         controllerPhysics.velocity.y += gravity * Time.deltaTime;
-    }
-
-    public void Move(Vector2 moveAmount, float minHeight = 0f, float maxHeight = 0f)
-    {
-        this.UpdateRaycastOrigins();
-        this.controllerPhysics.collisions.Reset();
-        this.controllerPhysics.collisions.moveAmountOld = moveAmount;
-
-        bool below = this.controllerPhysics.collisions.below;
-        transform.Translate(moveAmount);
-        Debug.Log("x: " + moveAmount.x + "y: " + moveAmount.y);
     }
 
     void ReadyForRaycast()
@@ -360,7 +346,7 @@ public class Controller2D : MonoBehaviour
         rayOriginLeft.x += _deltaPos.x;
         rayOriginRight.x += _deltaPos.x;
 
-        // TODO: ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½È±ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½ - ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ ï¿½Ê¿ï¿½
+        // TODO: °¢µµ ÀÖ´Â ¶¥¿¡¼­ °È±â ½Ã °¢µµ °è»ê ÇÊ¿ä - ±¸Çö Ãß°¡ ÇÊ¿ä
         /*
         RaycastHit2D leftHit, rightHit, targetHit;
 
@@ -430,7 +416,7 @@ public class Controller2D : MonoBehaviour
     {
         RaycastHit2D boxHit = Physics2D.BoxCast(origin, size, angle, direction, distance, layerMask);
 
-        // TODO: ï¿½Ú½ï¿½ ï¿½×¸ï¿½ï¿½ï¿½ (ï¿½Ï´ï¿½ ï¿½Ñ±ï¿½)
+        // TODO: ¹Ú½º ±×¸®±â (ÀÏ´Ü ³Ñ±è)
 
         return boxHit;
     }
