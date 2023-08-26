@@ -537,9 +537,13 @@ public class Controller2D : MonoBehaviour
             playerMoveVector = -nextMovePointToOriginChainNode + (Vector2)toOriginChainNode;
             //움직임 벡터
             Debug.DrawRay(playerPosition, playerMoveVector, Color.black);
-            velocity += ((Vector2)playerMoveVector).normalized;
+            velocity = ((Vector2)playerMoveVector).normalized * velocity.magnitude;
             SetXVelocity(velocity.x);
-            //SetYVelocity(velocity.y);
+            SetYVelocity(velocity.y);
+        }
+        else
+        {
+            //SetYVelocity(-30f);
         }
     }
 }
