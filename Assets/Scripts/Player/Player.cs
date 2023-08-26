@@ -46,6 +46,7 @@ public class Player : MonoBehaviour
         _abilities.AddRange(gameObject.GetComponents<PlayerAbility>());
 
         playerInfo = new Info();
+        ChangeState(State.IDLE);
     }
 
     void Update()

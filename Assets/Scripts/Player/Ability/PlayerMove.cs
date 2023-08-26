@@ -11,7 +11,7 @@ namespace W02
     {
 
 
-        float currentVelocityX;
+        float currentVelocityX = 0;
         float velocityXSmoothing;
 
         [Header("Player ¼Ó¼º")]

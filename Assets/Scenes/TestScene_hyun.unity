@@ -138,6 +138,7 @@ GameObject:
   - component: {fileID: 51435809}
   - component: {fileID: 51435808}
   - component: {fileID: 51435807}
+  - component: {fileID: 51435814}
   m_Layer: 6
   m_Name: Player (1)
   m_TagString: Untagged
@@ -176,6 +177,8 @@ MonoBehaviour:
     verticalRayCount: 4
     raycastHorizontalError: 0.05
     raycastVerticalError: 0.05
+    raycastHorizontalOffset: 0.05
+    raycastVerticalOffset: 0.05
   controllerPhysics:
     gravity: -30
     jumpGravityScale: 1
@@ -186,6 +189,21 @@ MonoBehaviour:
       below: 0
       left: 0
       right: 0
+      aboveTransform: {fileID: 0}
+      belowTransform: {fileID: 0}
+      leftTransform: {fileID: 0}
+      rightTransform: {fileID: 0}
+      moveAmountOld: {x: 0, y: 0}
+    prevCollisions:
+      above: 0
+      below: 0
+      left: 0
+      right: 0
+      aboveTransform: {fileID: 0}
+      belowTransform: {fileID: 0}
+      leftTransform: {fileID: 0}
+      rightTransform: {fileID: 0}
+      moveAmountOld: {x: 0, y: 0}
 --- !u!114 &51435809
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -199,12 +217,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxMoveSpeed: 6
-  accelerationTimeOnAir: 0.2
-  accelerationTimeOnGround: 0.2
-  decelerationTimeOnAir: 0.2
-  decelerationTimeOnGround: 0.2
-  decelerationTimeOverSpeedOnAir: 0.2
-  decelerationTimeOverSpeedOnGround: 0.2
+  accelerationOnAir: 0.2
+  accelerationOnGround: 0.2
+  decelerationOnAir: 0.2
+  decelerationOnGround: 0.2
+  decelerationMaxSpeedOnAir: 0.2
+  decelerationMaxSpeedOnGround: 0.2
   penaltySpeedDizzy: 0.8
   penaltySpeedWalk: 0.6
   penaltySpeedRope: 0.6
@@ -314,6 +332,21 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &51435814
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 51435806}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f8de922070255442b6bd42517e1bd5b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rope: {fileID: 370860889}
+  ropeSpeed: 10
+  ropeGravity: -5
 --- !u!1 &259416230
 GameObject:
   m_ObjectHideFlags: 0
