@@ -537,13 +537,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 25a5ffbcd124172489661ad82b3d6159, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxMoveSpeed: 6
-  accelerationTimeOnAir: 0.2
-  accelerationTimeOnGround: 0.2
-  decelerationTimeOnAir: 0.2
-  decelerationTimeOnGround: 0.2
-  decelerationTimeOverSpeedOnAir: 0.2
-  decelerationTimeOverSpeedOnGround: 0.2
+  maxMoveSpeed: 12
+  accelerationOnAir: 100
+  accelerationOnGround: 100
+  decelerationOnAir: 200
+  decelerationOnGround: 200
+  decelerationMaxSpeedOnAir: 0.2
+  decelerationMaxSpeedOnGround: 0.2
   penaltySpeedDizzy: 0.8
   penaltySpeedWalk: 0.6
   penaltySpeedRope: 0.6
