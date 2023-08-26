@@ -14,6 +14,7 @@ public class Player : MonoBehaviour
         WALKING,
         WALL_GRAB,
         JUMPING,
+        FALLING,
         DIZZY,
         ROPE,
     }
@@ -33,6 +34,8 @@ public class Player : MonoBehaviour
         public RopeState ropeState;
         public bool aimingEnabled;
         public bool isGrounded;
+        public bool isFalling;
+        public bool isJumping;
     }
 
     public Info playerInfo { get; private set; }

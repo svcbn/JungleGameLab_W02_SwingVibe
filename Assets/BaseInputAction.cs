@@ -263,7 +263,7 @@ public partial class @BaseInputAction: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""06c23670-2e87-45f5-a706-10c9be217302"",
+                    ""id"": ""6cfb1e34-1928-4442-85e0-372f2726c07a"",
                     ""path"": ""<Mouse>/position"",
                     ""interactions"": """",
                     ""processors"": """",
