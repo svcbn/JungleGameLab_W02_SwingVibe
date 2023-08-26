@@ -14,36 +14,27 @@ namespace W02
         float currentVelocityX;
         float velocityXSmoothing;
 
-        [Header("Player 속성")]
-        [SerializeField][Tooltip("최대 속력")] float maxMoveSpeed = 6f;
-        [SerializeField][Tooltip("공중 가속")] float accelerationOnAir = 0.2f;
-        [SerializeField][Tooltip("지상 가속")] float accelerationOnGround = 0.2f;
-        [SerializeField][Tooltip("공중 감속")] float decelerationOnAir = 0.2f;
-        [SerializeField][Tooltip("지상 감속")] float decelerationOnGround = 0.2f;
-        [SerializeField][Tooltip("최대 속도 공중 감속 / 합연산")] float decelerationMaxSpeedOnAir = 0.2f;
-        [SerializeField][Tooltip("최대 속도 지상 감속 / 합연산")] float decelerationMaxSpeedOnGround = 0.2f;
-        [SerializeField][Tooltip("피격될 때 속도 감소치 / 곱연산")] float penaltySpeedDizzy = 0.8f;
-        [SerializeField][Tooltip("걸어다닐때 속도 감소치 / 곱연산")] float penaltySpeedWalk = 0.6f;
-        [SerializeField][Tooltip("로프 걸때 속도 감소치 / 곱연산")] float penaltySpeedRope = 0.6f;
+        [Header("최대 속력")][SerializeField] float maxMoveSpeed = 6f;
+
+        [Header("공중 가속")][SerializeField] float accelerationOnAir = 0.2f;
+        [Header("지상 가속")][SerializeField] float accelerationOnGround = 0.2f;
+
+        [Header("공중 감속")][SerializeField] float decelerationOnAir = 0.2f;
+        [Header("지상 감속")][SerializeField] float decelerationOnGround = 0.2f;
+
+        [Header("최대 속도 공중 감속 (합연산)")][SerializeField] float decelerationMaxSpeedOnAir = 0.2f;
+        [Header("최대 속도 지상 감속 (합연산)")][SerializeField] float decelerationMaxSpeedOnGround = 0.2f;
+
+        [Header("피격될 때 속도 감소치 (곱연산)")][SerializeField] float penaltySpeedDizzy = 0.8f;
+        [Header("걸어다닐때 속도 감소치 (곱연산)")][SerializeField] float penaltySpeedWalk = 0.6f;
+        [Header("로프 걸때 속도 감소치 (곱연산)")][SerializeField] float penaltySpeedRope = 0.6f;
 
         float moveSpeed = 6f;
 
         protected override void HandleInput()
-        {
-            //currentVelocityX = _horizontalMove * moveSpeed;
-            //_controller.SetXVelocity(
-            //    Mathf.SmoothDamp(
-            //            _controller.controllerPhysics.velocity.x,
-            //            currentVelocityX,
-            //            ref velocityXSmoothing,
-            //            (_controller.controllerPhysics.collisions.below) ? accelerationTimeOnGround : accelerationTimeOnAir
-            //        )
-            //    );
-            
-            
+        {         
             this.CalculateVelocity();
             _controller.SetXVelocity(currentVelocityX);
-            Debug.Log("velocityX :" + currentVelocityX);
             //this.MoveMent();
         }
 
@@ -60,9 +51,9 @@ namespace W02
             int currentXDirection = RoundNormalize(currentVelocityX);
             bool isFasterThanMaxSpeed = Mathf.Abs(currentVelocityX) > maxMoveSpeed;
             float targetMaxSpeed = MaxSpeedSetting(_player.playerInfo.state);
-            float decelerationWhenMaxSpeed = _player.playerInfo.isGrounded ? decelerationMaxSpeedOnGround : decelerationMaxSpeedOnAir;
-            float deceleration = _player.playerInfo.isGrounded ? decelerationOnGround : decelerationOnAir;
-            float acceleration = _player.playerInfo.isGrounded ? accelerationOnGround : accelerationOnAir;
+            float decelerationWhenMaxSpeed = _controller.IsOnGround ? decelerationMaxSpeedOnGround : decelerationMaxSpeedOnAir;
+            float deceleration = _controller.IsOnGround ? decelerationOnGround : decelerationOnAir;
+            float acceleration = _controller.IsOnGround ? accelerationOnGround : accelerationOnAir;
 
             if (currentXDirection == 1)
             {
