@@ -195,24 +195,30 @@ MonoBehaviour:
       left: 0
       right: 0
       wasOnGround: 0
+      wasAtCeiling: 0
       aboveTransform: {fileID: 0}
       belowTransform: {fileID: 0}
       leftTransform: {fileID: 0}
       rightTransform: {fileID: 0}
       belowObjects: []
-      standingOn: {fileID: 0}
+      belowObj: {fileID: 0}
+      aboveObjects: []
+      aboveObj: {fileID: 0}
     prevCollisions:
       above: 0
       below: 0
       left: 0
       right: 0
       wasOnGround: 0
+      wasAtCeiling: 0
       aboveTransform: {fileID: 0}
       belowTransform: {fileID: 0}
       leftTransform: {fileID: 0}
       rightTransform: {fileID: 0}
       belowObjects: []
-      standingOn: {fileID: 0}
+      belowObj: {fileID: 0}
+      aboveObjects: []
+      aboveObj: {fileID: 0}
 --- !u!114 &51435809
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -356,6 +362,16 @@ MonoBehaviour:
   rope: {fileID: 370860889}
   ropeSpeed: 100
   ropeGravity: -20
+  maxMoveSpeed: 6
+  accelerationOnAir: 300
+  accelerationOnGround: 200
+  decelerationOnAir: 200
+  decelerationOnGround: 200
+  decelerationMaxSpeedOnAir: 0.2
+  decelerationMaxSpeedOnGround: 0.2
+  penaltySpeedDizzy: 0.8
+  penaltySpeedWalk: 0.6
+  penaltySpeedRope: 1
 --- !u!1 &259416230
 GameObject:
   m_ObjectHideFlags: 0

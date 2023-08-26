@@ -22,7 +22,7 @@ public class Chain : MonoBehaviour
         //}
     }
 
-    private void LateUpdate()
+	private void LateUpdate()
 	{
 		if (!this.isActive)
 		{
@@ -61,51 +61,6 @@ public class Chain : MonoBehaviour
 			}
 		}
 		this.Draw();
-	}
-
-	public void LinearConnect(Vector2 startPos, Vector2 endPos)
-	{
-		this.isActive = true;
-		this.isLinear = true;
-		this.linearPercent = 1f;
-		float length = Vector2.Distance(startPos, endPos);
-		this.chainNowCount = this.ChainCount(length);
-		this.chainNowCount = Mathf.Clamp(this.chainNowCount, 0, this.chainMaxCount);
-		if (this.chainNowCount < 1)
-		{
-			for (int i = 0; i <= this.chainMaxCount; i++)
-			{
-				this.nodes[i].isFixed = true;
-				this.nodes[i].isActive = false;
-			}
-			return;
-		}
-		for (int j = 0; j <= this.chainMaxCount; j++)
-		{
-			if (j < this.chainNowCount)
-			{
-				this.nodes[j].isFixed = false;
-				this.nodes[j].isActive = true;
-			}
-			else
-			{
-				Chain.ChainNode chainNode = this.nodes[j];
-				this.nodes[j].linearPosition = endPos;
-				chainNode.position = endPos;
-				this.nodes[j].isFixed = true;
-				this.nodes[j].isActive = false;
-			}
-		}
-		Chain.ChainNode chainNode2 = this.nodes[0];
-		this.nodes[0].linearPosition = startPos;
-		chainNode2.position = startPos;
-		this.nodes[0].isFixed = true;
-		this.nodes[0].isActive = true;
-		Chain.ChainNode chainNode3 = this.nodes[this.chainNowCount - 1];
-		this.nodes[this.chainNowCount - 1].linearPosition = endPos;
-		chainNode3.position = endPos;
-		this.nodes[this.chainNowCount - 1].isFixed = true;
-		this.nodes[this.chainNowCount - 1].isActive = true;
 	}
 
 	public void ChainConnect(Vector2 startPos, Vector2 endPos, float nowChainDistance, float linearPercent)
