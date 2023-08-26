@@ -20,7 +20,7 @@ namespace W02
         public bool JumpButton { get; protected set; }
         public bool HookButton { get; protected set; }
         public bool DashButton { get; protected set; }
-
+        
         // User callback functions
         public Action OnJumpPressed;
         public Action OnJumpReleased;

@@ -39,7 +39,7 @@ namespace W02
                         (_controller.controllerPhysics.collisions.below) ? accelerationTimeOnGround : accelerationTimeOnAir
                     )
                 );
-            CalculateVelocity();
+            //CalculateVelocity();
         }
 
         /// <summary>

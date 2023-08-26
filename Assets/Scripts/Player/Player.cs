@@ -42,6 +42,8 @@ public class Player : MonoBehaviour
     {
         _abilities = new List<PlayerAbility>();
         _abilities.AddRange(gameObject.GetComponents<PlayerAbility>());
+
+        playerInfo = new Info();
     }
 
     void Update()
