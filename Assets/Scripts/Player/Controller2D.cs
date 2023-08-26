@@ -168,9 +168,6 @@ public class Controller2D : MonoBehaviour
                 if (Mathf.Sign(directionX) == Mathf.Sign(controllerPhysics.velocity.x))
                 {
                     _originalDeltaPos.x = directionX * (hit.distance - _raycastOrigins.width / 2 - controllerSetting.raycastHorizontalOffset * 2);
-                } else
-                {
-                    _originalDeltaPos.x = controllerPhysics.velocity.x * Time.deltaTime;
                 }
 
 
@@ -219,12 +216,10 @@ public class Controller2D : MonoBehaviour
 
             if (hit)
             {
-                if (controllerPhysics.velocity.y > 0 && directionY == -1)
-                {
-                    _originalDeltaPos.y = controllerPhysics.velocity.y * Time.deltaTime;
-                } else
+                if (!(controllerPhysics.velocity.y > 0 && directionY == -1))
                 {
                     _originalDeltaPos.y = directionY * (hit.distance - _raycastOrigins.height / 2 - controllerSetting.raycastVerticalError);
+                    Debug.Log(_originalDeltaPos.y);
                 }
                 
                 rayLength = hit.distance;

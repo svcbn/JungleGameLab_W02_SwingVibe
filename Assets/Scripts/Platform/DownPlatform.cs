@@ -19,15 +19,7 @@ public class DownPlatform : Platform
     
     private void FixedUpdate()
     {
-       /* if ()
-        {
-            transform.position = Vector2.MoveTowards(transform.position, desPos.position, Time.deltaTime * downSpeed);
-        }
-        else
-        {
-            transform.position = Vector2.MoveTowards(transform.position, desPos.position, Time.deltaTime * upSpeed);
-        }*/
-        //transform.position = Vector2.down * Time.deltaTime * downSpeed;
+       
 
         if (Vector2.Distance(transform.position, desPos.position) <= 0.05f)
         {
@@ -39,7 +31,12 @@ public class DownPlatform : Platform
     public override void OnPlayerHit(Player player)
     {
         base.OnPlayerHit(player);
+        transform.position = Vector2.MoveTowards(transform.position, desPos.position, Time.deltaTime * downSpeed);        
+    }
 
-       // if()
+    public override void OnPlayerExit(Player player)
+    {
+        base.OnPlayerExit(player);
+        transform.position = Vector2.MoveTowards(transform.position, desPos.position, Time.deltaTime * upSpeed);
     }
 }
