@@ -87,7 +87,13 @@ public class PlayerRopeSwing : PlayerAbility
         //        Debug.DrawRay(playerPosition, playerMoveVector, Color.black);
         //        velocity = playerMoveVector;
         //    }
-        this._controller.CalculateRopeSwinging(ref rope, _player.transform.position, ropeSpeed);
-
+        this._controller.CalculateRopeSwinging(ref rope, _player.transform.position);
+        Debug.Log("rope velocity" + this._controller.controllerPhysics.velocity);
     }
+
+
+
+
+
+   
 }
