@@ -354,8 +354,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rope: {fileID: 370860889}
-  ropeSpeed: 10
-  ropeGravity: -5
+  ropeSpeed: 100
+  ropeGravity: -20
 --- !u!1 &259416230
 GameObject:
   m_ObjectHideFlags: 0
