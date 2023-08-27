@@ -14,12 +14,12 @@ public class Chain : MonoBehaviour
     {
 		Vector3 mousePosition = Mouse.current.position.ReadValue();
 		virtualRope.Draw(player.transform.position, Camera.main.ScreenToWorldPoint(mousePosition), detectionLength);
-        //if (player.GetComponent<Player>().playerInfo.ropeState == Player.RopeState.HOOKED)
-        //{
-        //    //player.GetComponent<Player>().ChangeState(Player.State.ROPE);
-        //    this.CreateChain(Vector2.Distance((Vector2)transform.position, Camera.main.ScreenToWorldPoint(mousePosition)));
-        //    this.ChainConnect(transform.position, Camera.main.ScreenToWorldPoint(mousePosition), Vector2.Distance((Vector2)transform.position, Camera.main.ScreenToWorldPoint(mousePosition)), 0.5f);
-        //}
+        if (player.GetComponent<Player>().playerInfo.ropeState == Player.RopeState.HOOKED)
+        {
+            //player.GetComponent<Player>().ChangeState(Player.State.ROPE);
+            this.CreateChain(Vector2.Distance((Vector2)transform.position, Camera.main.ScreenToWorldPoint(mousePosition)));
+            this.ChainConnect(transform.position, Camera.main.ScreenToWorldPoint(mousePosition), Vector2.Distance((Vector2)transform.position, Camera.main.ScreenToWorldPoint(mousePosition)), 0.5f);
+        }
     }
 
 	private void LateUpdate()

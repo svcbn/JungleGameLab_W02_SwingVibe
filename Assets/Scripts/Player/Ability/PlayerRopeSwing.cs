@@ -12,6 +12,9 @@ public class PlayerRopeSwing : PlayerAbility
     public float ropeGravity = -5f;
     float currentVelocityX = 0;
     float currentVelocityY = 0;
+    float direction;
+
+    float angularAcceleration;
 
     [Header("로프 최대 속력")] [SerializeField] float maxMoveSpeed = 6f;
 
@@ -39,14 +42,14 @@ public class PlayerRopeSwing : PlayerAbility
         }
         //HookedRope
         else if (_hookButtonClicked
-                && _player.playerInfo.state == Player.State.ROPE 
+                && _player.playerInfo.state == Player.State.ROPE
                 && _player.playerInfo.ropeState == Player.RopeState.HOOKED)
         {
             //플레이어의 위치 조정 추가하기
             CreateRope();
             _player.playerInfo.ropeState = Player.RopeState.HOLDING;
-        }
 
+        } 
         //로프 타는중
         if (_hookButtonClicked && _player.playerInfo.ropeState == Player.RopeState.HOLDING)
         {
@@ -113,7 +116,7 @@ public class PlayerRopeSwing : PlayerAbility
         //Vector2 velocity = this._controller.controllerPhysics.velocity;
         int currentXDirection = RoundNormalize(currentVelocityX);
         currentVelocityY = -20f;
-        currentVelocityX = 100f * RoundNormalize(InputManager.Instance.MoveHorizontal); ;
+        ///currentVelocityX = 100f * RoundNormalize(InputManager.Instance.MoveHorizontal); ;
         Debug.Log("x: " + currentVelocityX);
         Vector2 velocity = new Vector2(currentVelocityX, currentVelocityY);
         Chain.ChainNode lastRopeNode = rope.nodes[rope.chainMaxCount - 1];
@@ -124,16 +127,20 @@ public class PlayerRopeSwing : PlayerAbility
         Debug.DrawRay(playerPosition, toOriginChainNode, Color.red);
         Vector3 playerMoveVector = Vector3.Cross(new Vector3(0, 0, -1), toOriginChainNode);
 
-        float direction;
         if (velocity.x == 0.0f)
         {
-            if (playerPosition.x > lastRopeNode.position.x)
+            float angle = Vector2.Angle(-toOriginChainNode, new Vector2(0, -1));
+            if (angle < 3f)
             {
-                direction = -1;
+                velocity.x = 10f * direction;
             }
-            else
+            else if (playerPosition.x > lastRopeNode.position.x)
             {
                 direction = 1;
+            }
+            else if (playerPosition.x > lastRopeNode.position.x)
+            {
+                direction = -1;
             }
         }
         else
@@ -147,10 +154,11 @@ public class PlayerRopeSwing : PlayerAbility
         Debug.DrawRay(playerPosition, velocity, Color.yellow);
         if (Vector2.Distance((Vector2)playerPosition + velocity * Time.deltaTime, lastRopeNode.position) > rope.chainMaxLength)
         {
-            Debug.Log("angle: " + Vector2.Angle(velocity, playerMoveVector));
             float deg =  Vector2.Angle(velocity, playerMoveVector);
             if (deg > 90.0f)
+            {
                 deg = 89.99f;
+            }
             velocity = ((Vector2)playerMoveVector).normalized * velocity.magnitude * Mathf.Cos(Mathf.Deg2Rad * deg / 2);
             Debug.DrawRay(playerPosition, velocity, Color.green);
         }
@@ -184,7 +192,7 @@ public class PlayerRopeSwing : PlayerAbility
         float decelerationWhenMaxSpeed = _controller.IsOnGround ? decelerationMaxSpeedOnGround : decelerationMaxSpeedOnAir;
         float deceleration = _controller.IsOnGround ? decelerationOnGround : decelerationOnAir;
         float acceleration = _controller.IsOnGround ? accelerationOnGround : accelerationOnAir;
-
+   
         if (currentXDirection == 1) // 현재진행방향 ->
         {
             if (xInputDirection == 1) // 입력방향 ->
