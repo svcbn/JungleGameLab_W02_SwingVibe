@@ -61,6 +61,10 @@ public class Controller2D : MonoBehaviour
         public CollisionInfo collisions;
         [HideInInspector]
         public CollisionInfo prevCollisions;
+
+        [Header("로프 관련")]
+        public DemoRope.Node ropeEndNode;
+        public Vector2 lastVelocity;
     }
 
     [Serializable]
@@ -130,25 +134,38 @@ public class Controller2D : MonoBehaviour
 
     void UpdateController()
     {
-        ApplyGravity();
+        if (_player.playerInfo.state == Player.State.ROPE)
+        {
+            transform.position = controllerPhysics.ropeEndNode.pos;
+        } else
+        {
+            ApplyGravity();
 
-        ReadyForRaycast();
+            ReadyForRaycast();
 
-        UpdateRaycastOrigins();
-        controllerPhysics.collisions.Reset();
+            UpdateRaycastOrigins();
+            controllerPhysics.collisions.Reset();
 
-        controllerPhysics.prevCollisions = controllerPhysics.collisions;
-        HorizontalCollisions(1);
-        HorizontalCollisions(-1);
-        BelowCollision();
-        AboveCollison();
+            controllerPhysics.prevCollisions = controllerPhysics.collisions;
+            HorizontalCollisions(1);
+            HorizontalCollisions(-1);
+            BelowCollision();
+            AboveCollison();
 
-        transform.Translate(_deltaPos, Space.Self);
-        Debug.Log(_deltaPos);
-        controllerPhysics.velocity = _deltaPos / Time.deltaTime;
+            transform.Translate(_deltaPos, Space.Self);
+            Debug.Log(_deltaPos);
+            controllerPhysics.velocity = _deltaPos / Time.deltaTime;
 
-        controllerPhysics.externalForce.x = 0;
-        controllerPhysics.externalForce.y = 0;
+            controllerPhysics.externalForce.x = 0;
+            controllerPhysics.externalForce.y = 0;
+        }
+    }
+
+    public void SetRopeMode(DemoRope.Node endNode)
+    {
+        controllerPhysics.ropeEndNode = endNode;
+        controllerPhysics.lastVelocity = controllerPhysics.velocity;
+        _player.ChangeState(Player.State.ROPE);
     }
 
     public void SetVelocity(Vector3 velocity)
