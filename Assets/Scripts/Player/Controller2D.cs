@@ -23,6 +23,7 @@ public class Controller2D : MonoBehaviour
         public bool left, right;
         public bool wasOnGround;
         public bool wasAtCeiling;
+        public float faceDir;
 
         public Transform aboveTransform, belowTransform, leftTransform, rightTransform;
         public GameObject[] belowObjects;
@@ -150,7 +151,7 @@ public class Controller2D : MonoBehaviour
         controllerPhysics.externalForce.y = 0;
     }
 
-    public void Move(Vector3 velocity)
+    public void SetVelocity(Vector3 velocity)
     {
         this.controllerPhysics.velocity = velocity;
         this.controllerPhysics.externalForce = velocity;
@@ -162,10 +163,22 @@ public class Controller2D : MonoBehaviour
         this.controllerPhysics.externalForce.x = xVelocity;
     }
 
+    public void AddXVelocity(float xVelocity)
+    {
+        this.controllerPhysics.velocity.x += xVelocity;
+        this.controllerPhysics.externalForce.x += xVelocity;
+    }
+
     public void SetYVelocity(float yVelocity)
     {
         this.controllerPhysics.velocity.y = yVelocity;
         this.controllerPhysics.externalForce.y = yVelocity;
+    }
+
+    public void AddYVelocity(float yVelocity)
+    {
+        this.controllerPhysics.velocity.y += yVelocity;
+        this.controllerPhysics.externalForce.y += yVelocity;
     }
 
     void ApplyGravity()
