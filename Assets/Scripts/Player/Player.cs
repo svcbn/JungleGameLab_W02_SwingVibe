@@ -105,6 +105,10 @@ public class Player : MonoBehaviour
         {
             case State.IDLE:
                 // put bool here
+                if (playerInfo.state == Player.State.ROPE)
+                {
+                    //_controller.SetXVelocity()
+                }
 
                 break;
             case State.JUMPING:

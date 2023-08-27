@@ -33,6 +33,11 @@ namespace W02
 
         protected override void HandleInput()
         {
+            if (_player.playerInfo.state == Player.State.ROPE)
+            {
+                return;
+            }
+            currentVelocityX = _controller.controllerPhysics.velocity.x;
             this.CalculateVelocity();
             _controller.SetXVelocity(currentVelocityX);
             //this.MoveMent();

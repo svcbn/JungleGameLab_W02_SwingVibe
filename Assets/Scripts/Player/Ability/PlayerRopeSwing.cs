@@ -88,6 +88,12 @@ public class PlayerRopeSwing : PlayerAbility
     private void HoldingRope()
     {
         CalculateVelocity();
+        if (_controller.IsOnGround && Vector2.Distance((Vector2)_player.transform.position, rope.nodes[rope.chainMaxCount - 1].position) <= rope.chainMaxLength)
+        {
+            _controller.SetXVelocity(targetVelocityX);
+            rope.nodes[0].position = _player.transform.position;
+            return;
+        }
         CalculateRopeSwinging();
         //Debug.Log(" targetelocityX: " + targetVelocityX
         //       + " theta: " + theta

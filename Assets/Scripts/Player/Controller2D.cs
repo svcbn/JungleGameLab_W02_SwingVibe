@@ -153,8 +153,17 @@ public class Controller2D : MonoBehaviour
             AboveCollison();
 
             transform.Translate(_deltaPos, Space.Self);
+        if (_player.playerInfo.state != Player.State.ROPE)
+        {
             controllerPhysics.velocity = _deltaPos / Time.deltaTime;
-
+        } else
+        {
+            if (WasOnGound && !IsOnGround)
+            {
+                controllerPhysics.velocity = Vector3.zero;
+                controllerPhysics.externalForce = Vector3.zero;
+            }
+        }
             controllerPhysics.externalForce.x = 0;
             controllerPhysics.externalForce.y = 0;
         //}
@@ -266,6 +275,12 @@ public class Controller2D : MonoBehaviour
                 controllerPhysics.collisions.right = true;
                 controllerPhysics.collisions.rightTransform = targetTransform;
             }
+
+            if (_player.playerInfo.state == Player.State.ROPE)
+            {
+                controllerPhysics.velocity = Vector3.zero;
+                controllerPhysics.externalForce = Vector3.zero;
+            }
         } else
         {
             if (directionX == -1)
@@ -365,12 +380,21 @@ public class Controller2D : MonoBehaviour
             {
                 _deltaPos.y = 0;
             }
+
+            if (_player.playerInfo.state == Player.State.ROPE)
+            {
+                controllerPhysics.velocity = Vector3.zero;
+                controllerPhysics.externalForce = Vector3.zero;
+            }
         } else
         {
             controllerPhysics.collisions.below = false;
         }
 
-        StickToGround();
+        if (_player.playerInfo.state != Player.State.ROPE)
+        {
+            StickToGround();
+        }
     }
 
     void StickToGround()
@@ -390,26 +414,6 @@ public class Controller2D : MonoBehaviour
         float rayOriginY = rayOriginLeft.y;
         rayOriginLeft.x += _deltaPos.x;
         rayOriginRight.x += _deltaPos.x;
-
-        // TODO: 각도 있는 땅에서 걷기 시 각도 계산 필요 - 구현 추가 필요
-        /*
-        RaycastHit2D leftHit, rightHit, targetHit;
-
-        leftHit = RaycastWithDebug(rayOriginLeft, -transform.up, controllerSetting.raycastStickLength, collisionMask, Color.red);
-        rightHit = RaycastWithDebug(rayOriginRight, -transform.up, controllerSetting.raycastStickLength, collisionMask, Color.red);
-        
-        if(leftHit)
-        {
-            targetHit = leftHit;
-            targetVector = rayOriginLeft;
-        } else if (rightHit)
-        {
-            targetHit = rightHit;
-            targetVector = rayOriginRight;
-        } else
-        {
-            return;
-        }*/
 
         RaycastHit2D stickHit = BoxCastWithDebug(
             center,
@@ -474,8 +478,15 @@ public class Controller2D : MonoBehaviour
                 _deltaPos.y = 0;
             }
 
-            controllerPhysics.velocity.y = 0;
-            controllerPhysics.externalForce.y = 0;
+            if (_player.playerInfo.state == Player.State.ROPE)
+            {
+                controllerPhysics.velocity = Vector3.zero;
+                controllerPhysics.externalForce = Vector3.zero;
+            } else
+            {
+                controllerPhysics.velocity.y = 0;
+                controllerPhysics.externalForce.y = 0;
+            }
         }
         else
         {
