@@ -163,10 +163,22 @@ public class Controller2D : MonoBehaviour
         this.controllerPhysics.externalForce.x = xVelocity;
     }
 
+    public void AddXVelocity(float xVelocity)
+    {
+        this.controllerPhysics.velocity.x += xVelocity;
+        this.controllerPhysics.externalForce.x += xVelocity;
+    }
+
     public void SetYVelocity(float yVelocity)
     {
         this.controllerPhysics.velocity.y = yVelocity;
         this.controllerPhysics.externalForce.y = yVelocity;
+    }
+
+    public void AddYVelocity(float yVelocity)
+    {
+        this.controllerPhysics.velocity.y += yVelocity;
+        this.controllerPhysics.externalForce.y += yVelocity;
     }
 
     void ApplyGravity()
