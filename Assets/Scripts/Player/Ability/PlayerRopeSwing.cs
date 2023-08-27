@@ -87,7 +87,7 @@ public class PlayerRopeSwing : PlayerAbility
 
     private void HoldingRope()
     {
-        //CalculateVelocity();
+        CalculateVelocity();
         CalculateRopeSwinging();
         //Debug.Log(" targetelocityX: " + targetVelocityX
         //       + " theta: " + theta
@@ -99,7 +99,6 @@ public class PlayerRopeSwing : PlayerAbility
         AddVelocity();
         Vector2 playerPosition = _player.transform.position;
         rope.nodes[0].position = playerPosition;
-        return;
         //Vector2 velocity = new Vector2(targetVelocityX, 0) + (Vector2)_controller.controllerPhysics.velocity;
 
         Chain.ChainNode lastRopeNode = rope.nodes[rope.chainMaxCount - 1];
@@ -112,6 +111,7 @@ public class PlayerRopeSwing : PlayerAbility
         Vector2 newMoveVector = -nextMovePointToOriginChainNode + ropeDirection;
         this._controller.AddVelocity(newMoveVector);
 
+        return;
         //if (Vector2.Distance((Vector2)playerPosition + newMoveVector * Time.deltaTime, lastRopeNode.position) > rope.chainMaxLength)
         //{
         //    //float deg = Vector2.Angle(velocity, playerMoveVector);
