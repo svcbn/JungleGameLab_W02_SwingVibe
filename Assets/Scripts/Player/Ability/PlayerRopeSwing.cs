@@ -275,7 +275,7 @@ public class PlayerRopeSwing : PlayerAbility
     void UpdatePendulumAcceleration()
     {
         angularAcceleration = -ropeGravityAbs * Mathf.Sin(theta);
-        centripetalAcceleration = ropeGravityAbs / rope.chainMaxLength * Mathf.Cos(theta);
+        centripetalAcceleration = Mathf.Pow(_controller.controllerPhysics.velocity.magnitude, 2) / rope.chainMaxLength;
     }
 
     float rotateSpeed = 0.01f;
@@ -290,6 +290,7 @@ public class PlayerRopeSwing : PlayerAbility
         Vector2 g = ((Vector2)(Vector3.Cross(new Vector3(0, 0, 1), toOriginChainNode))).normalized * angularAcceleration ;
 
         Debug.Log(t + " , " + g + " t + g : " + (t + g));
+        g = TranslateForce(g, toOriginChainNode, RoundNormalize(g.x));
         _controller.AddVelocity((t + g) * Time.deltaTime);
     }
 

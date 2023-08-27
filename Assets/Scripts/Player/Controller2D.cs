@@ -134,11 +134,11 @@ public class Controller2D : MonoBehaviour
 
     void UpdateController()
     {
-        if (_player.playerInfo.state == Player.State.ROPE)
+        /*if (_player.playerInfo.state == Player.State.ROPE)
         {
             transform.position = controllerPhysics.ropeEndNode.pos;
         } else
-        {
+        {*/
             ApplyGravity();
 
             ReadyForRaycast();
@@ -157,7 +157,7 @@ public class Controller2D : MonoBehaviour
 
             controllerPhysics.externalForce.x = 0;
             controllerPhysics.externalForce.y = 0;
-        }
+        //}
     }
 
     public void SetRopeMode(DemoRope.Node endNode)
