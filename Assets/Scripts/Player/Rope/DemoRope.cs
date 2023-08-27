@@ -37,8 +37,9 @@ public class DemoRope : PlayerAbility
     private float _ropeLen;
     private Vector2 _playerVel;
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         lineRenderer = GetComponent<LineRenderer>();
     }
 
@@ -50,7 +51,7 @@ public class DemoRope : PlayerAbility
         {
             Vector2 ropeVec = _endPos - _startPos;
             float angle = Vector2.Angle(ropeVec, Vector2.down);
-            float speed = Mathf.Sqrt(2 * _gravity * Mathf.Cos(Mathf.Deg2Rad * angle) * _ropeLen); // ´ÜÁøÀÚ ¿îµ¿ ½ÃÀÛ À§Ä¡¿¡¼­ÀÇ ¼Ó·Â
+            float speed = Mathf.Sqrt(2 * _gravity * Mathf.Cos(Mathf.Deg2Rad * angle) * _ropeLen); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½îµ¿ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ó·ï¿½
             Vector2 tangentVec = new Vector2(-ropeVec.y, ropeVec.x);
             tangentVec.Normalize();
             _playerVel = tangentVec * speed;
@@ -68,7 +69,7 @@ public class DemoRope : PlayerAbility
             radiusVec.Normalize();
             radiusVec = radiusVec * _ropeLen;
 
-            // ´ÙÀ½ À§Ä¡ ÁöÁ¤
+            // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½
             last.pos = first.pos + radiusVec;
 
             float angle = Vector2.Angle(radiusVec, Vector2.down);
@@ -94,6 +95,7 @@ public class DemoRope : PlayerAbility
             _nodes[i].pos = Vector2.Lerp(_nodes[0].pos, _nodes.Last().pos, i / (_nodeNum - 1));
             lineRenderer.SetPosition(i, _nodes[i].pos);
         }
+        Debug.Log(_nodes[0].pos + " + " + _nodes.Last().pos);
     }
 
     void CheckClick()
@@ -101,7 +103,6 @@ public class DemoRope : PlayerAbility
         if (!_isRopeCreated && _hookButtonClicked)
         {
             _startPos = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
-            Debug.Log(_player);
             _endPos = _player.transform.position;
             CreateRope();
         }
@@ -121,8 +122,10 @@ public class DemoRope : PlayerAbility
         for (int i = 0; i < numNodes; i++)
         {
             Vector2 pos = _startPos + unitVec * i;
-            Node node = new Node(null, _nodes.Last(), pos, i == 0, i == numNodes - 1);
-            _nodes.Last<Node>().next = node;
+            Node node = new Node(null, i == 0 ? null : _nodes.Last(), pos, i == 0, i == numNodes - 1);
+            if (i != 0) {
+                _nodes.Last<Node>().next = node;
+            }
             _nodes.Add(node);
         }
 

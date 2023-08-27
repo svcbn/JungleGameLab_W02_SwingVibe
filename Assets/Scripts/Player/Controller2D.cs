@@ -46,7 +46,7 @@ public class Controller2D : MonoBehaviour
         public float epsilon = 0.0001f;
         public Vector2 maxVelocity = new Vector2(100f, 100f);
 
-        [Header("Áß·Â °ü·Ã ¼³Á¤")]
+        [Header("ï¿½ß·ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½")]
         public float gravity = -30f;
         [Range(0f, 2f)]
         public float jumpGravityScale = 1f;
@@ -62,7 +62,7 @@ public class Controller2D : MonoBehaviour
         [HideInInspector]
         public CollisionInfo prevCollisions;
 
-        [Header("·ÎÇÁ °ü·Ã")]
+        [Header("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½")]
         public DemoRope.Node ropeEndNode;
         public Vector2 lastVelocity;
     }
@@ -153,7 +153,6 @@ public class Controller2D : MonoBehaviour
             AboveCollison();
 
             transform.Translate(_deltaPos, Space.Self);
-            Debug.Log(_deltaPos);
             controllerPhysics.velocity = _deltaPos / Time.deltaTime;
 
             controllerPhysics.externalForce.x = 0;
@@ -369,7 +368,7 @@ public class Controller2D : MonoBehaviour
         rayOriginLeft.x += _deltaPos.x;
         rayOriginRight.x += _deltaPos.x;
 
-        // TODO: °¢µµ ÀÖ´Â ¶¥¿¡¼­ °È±â ½Ã °¢µµ °è»ê ÇÊ¿ä - ±¸Çö Ãß°¡ ÇÊ¿ä
+        // TODO: ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½È±ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½ - ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ ï¿½Ê¿ï¿½
         /*
         RaycastHit2D leftHit, rightHit, targetHit;
 
@@ -495,7 +494,7 @@ public class Controller2D : MonoBehaviour
     {
         RaycastHit2D boxHit = Physics2D.BoxCast(origin, size, angle, direction, distance, layerMask);
 
-        // TODO: ¹Ú½º ±×¸®±â (ÀÏ´Ü ³Ñ±è)
+        // TODO: ï¿½Ú½ï¿½ ï¿½×¸ï¿½ï¿½ï¿½ (ï¿½Ï´ï¿½ ï¿½Ñ±ï¿½)
 
         return boxHit;
     }
@@ -542,10 +541,10 @@ public class Controller2D : MonoBehaviour
             {
                 return;
                 if (playerPosition.x < lastRopeNode.position.x)
-                {//¿À¸¥ÂÊ ³«ÇÏ
+                {//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
                     playerMoveVector = playerMoveVector;
 
-                }//¿ÞÂÊ ³«ÇÏ
+                }//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
                 else
                     playerMoveVector = -playerMoveVector;
 
@@ -553,7 +552,7 @@ public class Controller2D : MonoBehaviour
             Vector3 nextMovePoint = (Vector3)playerPosition + playerMoveVector * velocity.x * 0.01f;
             Vector2 nextMovePointToOriginChainNode = rope.chainMaxLength * (lastRopeNode.position - (Vector2)nextMovePoint).normalized;
             playerMoveVector = -nextMovePointToOriginChainNode + (Vector2)toOriginChainNode;
-            //¿òÁ÷ÀÓ º¤ÅÍ
+            //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             Debug.DrawRay(playerPosition, playerMoveVector, Color.black);
             velocity += ((Vector2)playerMoveVector).normalized;
             SetXVelocity(velocity.x);
