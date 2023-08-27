@@ -14,8 +14,6 @@ public class PlayerRopeSwing : PlayerAbility
     float currentVelocityY = 0;
     float direction;
 
-    float angularAcceleration;
-
     [Header("로프 최대 속력")] [SerializeField] float maxMoveSpeed = 6f;
 
     [Header("로프 공중 가속")] [SerializeField] float accelerationOnAir = 0.2f;
@@ -53,7 +51,14 @@ public class PlayerRopeSwing : PlayerAbility
         //로프 타는중
         if (_hookButtonClicked && _player.playerInfo.ropeState == Player.RopeState.HOLDING)
         {
+            if (rope.nodes.Count != 0)
+            {
+
+                UpdateTheta(rope.nodes[rope.chainMaxCount - 1].position, _player.transform.position);
+                TestVelocity();
+            }
             HoldingRope();
+
         }
 
         //로프 실패
@@ -65,6 +70,8 @@ public class PlayerRopeSwing : PlayerAbility
 
             _controller.SetXVelocity(0);
         }
+
+
     }
 
     private void CreateRope()
@@ -113,11 +120,7 @@ public class PlayerRopeSwing : PlayerAbility
     }
     public void CalculateRopeSwinging()
     {
-        //Vector2 velocity = this._controller.controllerPhysics.velocity;
-        int currentXDirection = RoundNormalize(currentVelocityX);
-        currentVelocityY = -20f;
-        ///currentVelocityX = 100f * RoundNormalize(InputManager.Instance.MoveHorizontal); ;
-        Debug.Log("x: " + currentVelocityX);
+        currentVelocityY += ropeGravity * Time.deltaTime;
         Vector2 velocity = new Vector2(currentVelocityX, currentVelocityY);
         Chain.ChainNode lastRopeNode = rope.nodes[rope.chainMaxCount - 1];
         Vector2 playerPosition = _player.transform.position;
@@ -127,26 +130,7 @@ public class PlayerRopeSwing : PlayerAbility
         Debug.DrawRay(playerPosition, toOriginChainNode, Color.red);
         Vector3 playerMoveVector = Vector3.Cross(new Vector3(0, 0, -1), toOriginChainNode);
 
-        if (velocity.x == 0.0f)
-        {
-            float angle = Vector2.Angle(-toOriginChainNode, new Vector2(0, -1));
-            if (angle < 3f)
-            {
-                velocity.x = 10f * direction;
-            }
-            else if (playerPosition.x > lastRopeNode.position.x)
-            {
-                direction = 1;
-            }
-            else if (playerPosition.x > lastRopeNode.position.x)
-            {
-                direction = -1;
-            }
-        }
-        else
-        {
-            direction = velocity.x;
-        }
+        direction = RoundNormalize(currentVelocityX);
         Vector3 nextMovePoint = (Vector3)playerPosition + playerMoveVector * direction * 0.01f;
         Vector2 nextMovePointToOriginChainNode = rope.chainMaxLength * (lastRopeNode.position - (Vector2)nextMovePoint).normalized;
         playerMoveVector = -nextMovePointToOriginChainNode + (Vector2)toOriginChainNode;
@@ -155,6 +139,8 @@ public class PlayerRopeSwing : PlayerAbility
         if (Vector2.Distance((Vector2)playerPosition + velocity * Time.deltaTime, lastRopeNode.position) > rope.chainMaxLength)
         {
             float deg =  Vector2.Angle(velocity, playerMoveVector);
+            if (deg <= 0.1f)
+                currentVelocityY = 0;
             if (deg > 90.0f)
             {
                 deg = 89.99f;
@@ -162,8 +148,9 @@ public class PlayerRopeSwing : PlayerAbility
             velocity = ((Vector2)playerMoveVector).normalized * velocity.magnitude * Mathf.Cos(Mathf.Deg2Rad * deg / 2);
             Debug.DrawRay(playerPosition, velocity, Color.green);
         }
-        this._controller.SetXVelocity(velocity.x);
-        this._controller.SetYVelocity(velocity.y);
+        TestMove();
+        this._controller.AddXVelocity(velocity.x * Time.deltaTime);
+        this._controller.AddYVelocity(velocity.y * Time.deltaTime);
     }
     int RoundNormalize(float _value)
     {
@@ -272,5 +259,34 @@ public class PlayerRopeSwing : PlayerAbility
         }
     }
 
+
+    float theta; // 초기각
+    float omega = 0f; // 각속도
+
+    void UpdateTheta(Vector3 hookedPosition, Vector3 currentPosition)
+    {
+        float Xdistance = hookedPosition.x - currentPosition.x;
+        float Ydistance = hookedPosition.y - currentPosition.y;
+
+        theta = Mathf.Atan2(Ydistance, Xdistance) * Mathf.Rad2Deg - 90f;
+        //Debug.Log("theta" + theta);
+    }
+
+    float angularAcceleration;
+
+    void TestVelocity()
+    {
+        angularAcceleration = -ropeGravity / rope.chainMaxLength * Mathf.Sin(theta);
+        //Debug.Log("angularAcceleration" + angularAcceleration);
+    }
+
+    private void TestMove()
+    {
+        omega += angularAcceleration * Time.deltaTime;
+        theta += omega * Time.deltaTime;
+
+        _controller.AddXVelocity(angularAcceleration * Time.deltaTime);
+        //Debug.Log("velocity" + _controller.controllerPhysics.velocity);
+    }
 
 }
