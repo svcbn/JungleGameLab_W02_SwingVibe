@@ -144,7 +144,7 @@ public class Controller2D : MonoBehaviour
         AboveCollison();
 
         transform.Translate(_deltaPos, Space.Self);
-        Debug.Log(_deltaPos);
+        //Debug.Log("deltaPos: " + _deltaPos);
         controllerPhysics.velocity = _deltaPos / Time.deltaTime;
 
         controllerPhysics.externalForce.x = 0;
@@ -173,6 +173,10 @@ public class Controller2D : MonoBehaviour
     {
         bool isFalling = controllerPhysics.velocity.y < 0;
         float gravity = controllerPhysics.gravity * (isFalling ? controllerPhysics.fallGravityScale : controllerPhysics.jumpGravityScale);
+        if (_player.playerInfo.state == Player.State.ROPE)
+        {
+            return;
+        }
         controllerPhysics.velocity.y += gravity * Time.deltaTime;
     }
 
@@ -506,41 +510,5 @@ public class Controller2D : MonoBehaviour
 
         _horizontalRaySpacing = bounds.size.y - 2 * controllerSetting.raycastHorizontalError / (controllerSetting.horizontalRayCount - 1);
         _verticalRaySpacing = bounds.size.x / (controllerSetting.verticalRayCount - 1);
-    }
-
-    public void CalculateRopeSwinging(ref Chain rope, Vector2 playerPosition)
-    {
-        Vector2 velocity = controllerPhysics.velocity;
-        Chain.ChainNode lastRopeNode = rope.nodes[rope.chainMaxCount - 1];
-        //Vector2 playerPosition = (Vector2)_player.transform.position;
-        rope.nodes[0].position = this.transform.position;
-        if (Vector2.Distance((Vector2)playerPosition + velocity, lastRopeNode.position) > rope.chainMaxLength)
-        {
-            Vector3 toOriginChainNode = ((Vector3)lastRopeNode.position - (Vector3)playerPosition);
-            Debug.DrawRay(playerPosition, toOriginChainNode, Color.red);
-            Vector3 playerMoveVector = Vector3.Cross(new Vector3(0, 0, -1), toOriginChainNode);
-            if (velocity.x < 0)
-                playerMoveVector = -playerMoveVector;
-            else if (velocity.x == 0)
-            {
-                return;
-                if (playerPosition.x < lastRopeNode.position.x)
-                {//¿À¸¥ÂÊ ³«ÇÏ
-                    playerMoveVector = playerMoveVector;
-
-                }//¿ÞÂÊ ³«ÇÏ
-                else
-                    playerMoveVector = -playerMoveVector;
-
-            }
-            Vector3 nextMovePoint = (Vector3)playerPosition + playerMoveVector * velocity.x * 0.01f;
-            Vector2 nextMovePointToOriginChainNode = rope.chainMaxLength * (lastRopeNode.position - (Vector2)nextMovePoint).normalized;
-            playerMoveVector = -nextMovePointToOriginChainNode + (Vector2)toOriginChainNode;
-            //¿òÁ÷ÀÓ º¤ÅÍ
-            Debug.DrawRay(playerPosition, playerMoveVector, Color.black);
-            velocity += ((Vector2)playerMoveVector).normalized;
-            SetXVelocity(velocity.x);
-            //SetYVelocity(velocity.y);
-        }
     }
 }

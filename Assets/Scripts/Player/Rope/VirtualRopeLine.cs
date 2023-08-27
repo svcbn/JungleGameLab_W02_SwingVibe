@@ -20,7 +20,6 @@ public class VirtualRopeLine : MonoBehaviour
         lineRenderer.enabled = true;
         DetectObject(pos, to - (Vector2)pos, length);
         lineRenderer.SetPosition(0, new Vector3(0,0,0));
-        Debug.Log(targetPos);
         lineRenderer.SetPosition(1, new Vector2(-pos.x + targetPos.x, (-pos.y + targetPos.y)/ 2));
     }
 
@@ -36,15 +35,17 @@ public class VirtualRopeLine : MonoBehaviour
         for(int i = 0; i < angles.Length; i++)
         {
             if (ShootRay(pos, dir.normalized, length, angles[i], colors[i]))
-                Debug.Log("hit: " + i);
-        }
+            {
+                ;
+            }
+            
+        }       
     }
 
     public bool ShootRay(Vector2 pos, Vector2 dir, float length, float angle, Color color)
     {
         Vector2 raydir = Quaternion.Euler(0f, 0f, angle) * dir;
         RaycastHit2D hit = Physics2D.Raycast(pos, raydir * length);
-        Debug.DrawRay(pos, raydir * length, color);
         if (hit)
         {
             ////만약 특정오브젝트라면
