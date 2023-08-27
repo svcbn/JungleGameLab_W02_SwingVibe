@@ -135,7 +135,6 @@ GameObject:
   - component: {fileID: 51435812}
   - component: {fileID: 51435811}
   - component: {fileID: 51435810}
-  - component: {fileID: 51435809}
   - component: {fileID: 51435808}
   - component: {fileID: 51435807}
   - component: {fileID: 51435814}
@@ -196,6 +195,7 @@ MonoBehaviour:
       right: 0
       wasOnGround: 0
       wasAtCeiling: 0
+      faceDir: 0
       aboveTransform: {fileID: 0}
       belowTransform: {fileID: 0}
       leftTransform: {fileID: 0}
@@ -211,6 +211,7 @@ MonoBehaviour:
       right: 0
       wasOnGround: 0
       wasAtCeiling: 0
+      faceDir: 0
       aboveTransform: {fileID: 0}
       belowTransform: {fileID: 0}
       leftTransform: {fileID: 0}
@@ -219,28 +220,6 @@ MonoBehaviour:
       belowObj: {fileID: 0}
       aboveObjects: []
       aboveObj: {fileID: 0}
---- !u!114 &51435809
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 51435806}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 25a5ffbcd124172489661ad82b3d6159, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxMoveSpeed: 51.34
-  accelerationOnAir: 50
-  accelerationOnGround: 50
-  decelerationOnAir: 200
-  decelerationOnGround: 200
-  decelerationMaxSpeedOnAir: 0.2
-  decelerationMaxSpeedOnGround: 0.2
-  penaltySpeedDizzy: 0.8
-  penaltySpeedWalk: 0.6
-  penaltySpeedRope: 0.6
 --- !u!114 &51435810
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -362,11 +341,11 @@ MonoBehaviour:
   rope: {fileID: 370860889}
   ropeSpeed: 100
   ropeGravity: -20
-  maxMoveSpeed: 30
-  accelerationOnAir: 300
-  accelerationOnGround: 200
-  decelerationOnAir: 0.1
-  decelerationOnGround: 200
+  maxMoveSpeed: 10
+  accelerationOnAir: 100
+  accelerationOnGround: 100
+  decelerationOnAir: 550
+  decelerationOnGround: 50
   decelerationMaxSpeedOnAir: 0.2
   decelerationMaxSpeedOnGround: 0.2
   penaltySpeedDizzy: 0.8
@@ -804,7 +783,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1383578025
 Transform:
   m_ObjectHideFlags: 0

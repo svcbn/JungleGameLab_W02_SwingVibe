@@ -46,7 +46,7 @@ public class Controller2D : MonoBehaviour
         public float epsilon = 0.0001f;
         public Vector2 maxVelocity = new Vector2(100f, 100f);
 
-        [Header("�߷� ���� ����")]
+        [Header("중력 관련 설정")]
         public float gravity = -30f;
         [Range(0f, 2f)]
         public float jumpGravityScale = 1f;
@@ -172,6 +172,13 @@ public class Controller2D : MonoBehaviour
         this.controllerPhysics.velocity = velocity;
         this.controllerPhysics.externalForce = velocity;
     }
+
+    public void AddVelocity(Vector3 velocity)
+    {
+        this.controllerPhysics.velocity += velocity;
+        this.controllerPhysics.externalForce += velocity;
+    }
+
 
     public void SetXVelocity(float xVelocity)
     {
@@ -384,7 +391,7 @@ public class Controller2D : MonoBehaviour
         rayOriginLeft.x += _deltaPos.x;
         rayOriginRight.x += _deltaPos.x;
 
-        // TODO: ���� �ִ� ������ �ȱ� �� ���� ��� �ʿ� - ���� �߰� �ʿ�
+        // TODO: 각도 있는 땅에서 걷기 시 각도 계산 필요 - 구현 추가 필요
         /*
         RaycastHit2D leftHit, rightHit, targetHit;
 
@@ -510,7 +517,7 @@ public class Controller2D : MonoBehaviour
     {
         RaycastHit2D boxHit = Physics2D.BoxCast(origin, size, angle, direction, distance, layerMask);
 
-        // TODO: �ڽ� �׸��� (�ϴ� �ѱ�)
+        // TODO: 박스 그리기 (일단 넘김)
 
         return boxHit;
     }
