@@ -144,7 +144,7 @@ public class Controller2D : MonoBehaviour
         AboveCollison();
 
         transform.Translate(_deltaPos, Space.Self);
-        Debug.Log(_deltaPos);
+        //Debug.Log(_deltaPos);
         controllerPhysics.velocity = _deltaPos / Time.deltaTime;
 
         controllerPhysics.externalForce.x = 0;
