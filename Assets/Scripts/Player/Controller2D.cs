@@ -145,7 +145,7 @@ public class Controller2D : MonoBehaviour
 
         transform.Translate(_deltaPos, Space.Self);
         //Debug.Log("deltaPos: " + _deltaPos);
-        controllerPhysics.velocity = _deltaPos / Time.deltaTime;
+        //controllerPhysics.velocity = _deltaPos / Time.deltaTime;
 
         controllerPhysics.externalForce.x = 0;
         controllerPhysics.externalForce.y = 0;
@@ -156,6 +156,13 @@ public class Controller2D : MonoBehaviour
         this.controllerPhysics.velocity = velocity;
         this.controllerPhysics.externalForce = velocity;
     }
+
+    public void AddVelocity(Vector3 velocity)
+    {
+        this.controllerPhysics.velocity += velocity;
+        this.controllerPhysics.externalForce += velocity;
+    }
+
 
     public void SetXVelocity(float xVelocity)
     {

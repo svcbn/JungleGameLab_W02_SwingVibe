@@ -9,8 +9,8 @@ public class PlayerRopeSwing : PlayerAbility
 {
     public Chain rope;
     public float ropeSpeed = 10f;
-    public float ropeGravity = -5f;
-    float currentVelocityX = 0;
+    public float ropeGravityAbs = 20f;
+    float targetVelocityX = 0;
     float currentVelocityY = 0;
     float direction;
 
@@ -55,7 +55,7 @@ public class PlayerRopeSwing : PlayerAbility
             {
 
                 UpdateTheta(rope.nodes[rope.chainMaxCount - 1].position, _player.transform.position);
-                TestVelocity();
+                UpdatePendulumAcceleration();
             }
             HoldingRope();
 
@@ -68,7 +68,7 @@ public class PlayerRopeSwing : PlayerAbility
             _player.playerInfo.ropeState = Player.RopeState.FAILED;
             _player.ChangeState(Player.State.IDLE);
 
-            _controller.SetXVelocity(0);
+            //속도보정
         }
 
 
@@ -80,78 +80,77 @@ public class PlayerRopeSwing : PlayerAbility
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
         //rope.chainMaxLength = Vector2.Distance(playerPosition, mousePosition);
         float ropeLength = Vector2.Distance(playerPosition, mousePosition);
+        _controller.SetVelocity(Vector2.zero);
         rope.CreateChain(ropeLength);
         rope.ChainConnect(playerPosition, mousePosition, ropeLength, 0.5f);
     }
 
     private void HoldingRope()
     {
-        //    Chain.ChainNode lastRopeNode = rope.nodes[rope.chainMaxCount - 1];
-        //    Vector2 playerPosition = (Vector2)_player.transform.position;
-        //    rope.nodes[0].position = this.transform.position;
-        //    ////////velocity.y = -1 * speed;
-        //    if (Vector2.Distance((Vector2)playerPosition + velocity, lastRopeNode.position) > rope.chainMaxLength)
-        //    {
-        //        Vector3 toOriginChainNode = ((Vector3)lastRopeNode.position - (Vector3)playerPosition);
-        //        Debug.DrawRay(playerPosition, toOriginChainNode, Color.red);
-        //        Vector3 playerMoveVector = Vector3.Cross(new Vector3(0, 0, -1), toOriginChainNode);
-        //        if (velocity.x < 0)
-        //            playerMoveVector = -playerMoveVector;
-        //        else if (velocity.x == 0)
-        //        {
-        //            if (playerPosition.x < lastRopeNode.position.x)
-        //            {//오른쪽 낙하
-        //                playerMoveVector = playerMoveVector;
-
-        //            }//왼쪽 낙하
-        //            else
-        //                playerMoveVector = -playerMoveVector;
-
-        //        }
-        //        Vector3 nextMovePoint = (Vector3)playerPosition + playerMoveVector * ropeSpeed * 0.1f;
-        //        Vector2 nextMovePointToOriginChainNode = rope.chainMaxLength * (lastRopeNode.position - (Vector2)nextMovePoint).normalized;
-        //        playerMoveVector = -nextMovePointToOriginChainNode + (Vector2)toOriginChainNode;
-        //        //움직임 벡터
-        //        Debug.DrawRay(playerPosition, playerMoveVector, Color.black);
-        //        velocity = playerMoveVector;
-        //    }
-        CalculateVelocity();
+        //CalculateVelocity();
         CalculateRopeSwinging();
+        //Debug.Log(" targetelocityX: " + targetVelocityX
+        //       + " theta: " + theta
+        //       + " angularAcceleration: " + angularAcceleration
+        //       + " Current velocity: " + _controller.controllerPhysics.velocity);
     }
     public void CalculateRopeSwinging()
     {
-        currentVelocityY += ropeGravity * Time.deltaTime;
-        Vector2 velocity = new Vector2(currentVelocityX, currentVelocityY);
+        AddVelocity();
+        Vector2 playerPosition = _player.transform.position;
+        rope.nodes[0].position = playerPosition;
+        return;
+        //Vector2 velocity = new Vector2(targetVelocityX, 0) + (Vector2)_controller.controllerPhysics.velocity;
+
+        Chain.ChainNode lastRopeNode = rope.nodes[rope.chainMaxCount - 1];
+        Vector2 ropeDirection = (Vector2)lastRopeNode.position - playerPosition;
+        Vector2 v1 = TranslateForce(new Vector2(targetVelocityX, 0), ropeDirection, RoundNormalize(targetVelocityX));
+        Vector2 v3 = (v1);
+
+        Vector2 nextMovePoint = (Vector2)playerPosition + v3 * 0.01f;
+        Vector2 nextMovePointToOriginChainNode = rope.chainMaxLength * (lastRopeNode.position - (Vector2)nextMovePoint).normalized;
+        Vector2 newMoveVector = -nextMovePointToOriginChainNode + ropeDirection;
+        this._controller.AddVelocity(newMoveVector);
+
+        //if (Vector2.Distance((Vector2)playerPosition + newMoveVector * Time.deltaTime, lastRopeNode.position) > rope.chainMaxLength)
+        //{
+        //    //float deg = Vector2.Angle(velocity, playerMoveVector);
+        //    //if (deg > 90.0f)
+        //    //{
+        //    //    deg = 89.99f;
+        //    //}
+        //}
+        //else
+        //{
+
+        //    this._controller.AddVelocity(newMoveVector);
+        //}
+
+    }
+
+    Vector2 TranslateForce(Vector2 rawForce, Vector2 ropeDirection, float dir)
+    {
+        Vector2 translatedVector;
+
         Chain.ChainNode lastRopeNode = rope.nodes[rope.chainMaxCount - 1];
         Vector2 playerPosition = _player.transform.position;
-        rope.nodes[0].position = this.transform.position;
-
-        Vector3 toOriginChainNode = ((Vector3)lastRopeNode.position - (Vector3)playerPosition);
-        Debug.DrawRay(playerPosition, toOriginChainNode, Color.red);
+        Vector3 toOriginChainNode = (ropeDirection);
+        //Debug.DrawRay(playerPosition, toOriginChainNode, Color.red);
         Vector3 playerMoveVector = Vector3.Cross(new Vector3(0, 0, -1), toOriginChainNode);
 
-        direction = RoundNormalize(currentVelocityX);
-        Vector3 nextMovePoint = (Vector3)playerPosition + playerMoveVector * direction * 0.01f;
-        Vector2 nextMovePointToOriginChainNode = rope.chainMaxLength * (lastRopeNode.position - (Vector2)nextMovePoint).normalized;
-        playerMoveVector = -nextMovePointToOriginChainNode + (Vector2)toOriginChainNode;
 
-        Debug.DrawRay(playerPosition, velocity, Color.yellow);
-        if (Vector2.Distance((Vector2)playerPosition + velocity * Time.deltaTime, lastRopeNode.position) > rope.chainMaxLength)
-        {
-            float deg =  Vector2.Angle(velocity, playerMoveVector);
-            if (deg <= 0.1f)
-                currentVelocityY = 0;
-            if (deg > 90.0f)
-            {
-                deg = 89.99f;
-            }
-            velocity = ((Vector2)playerMoveVector).normalized * velocity.magnitude * Mathf.Cos(Mathf.Deg2Rad * deg / 2);
-            Debug.DrawRay(playerPosition, velocity, Color.green);
-        }
-        TestMove();
-        this._controller.AddXVelocity(velocity.x * Time.deltaTime);
-        this._controller.AddYVelocity(velocity.y * Time.deltaTime);
+        if (dir < 0)
+            playerMoveVector = -1 * playerMoveVector;
+        //Vector3 nextMovePoint = (Vector3)playerPosition + playerMoveVector * direction * 0.01f;
+        //Vector2 nextMovePointToOriginChainNode = rope.chainMaxLength * (lastRopeNode.position - (Vector2)nextMovePoint).normalized;
+        //playerMoveVector = -nextMovePointToOriginChainNode + (Vector2)toOriginChainNode;
+
+        float deg = Vector2.Angle(rawForce, playerMoveVector);
+        translatedVector = ((Vector2)playerMoveVector).normalized * rawForce.magnitude * Mathf.Cos(Mathf.Deg2Rad * deg);
+
+        return translatedVector;
     }
+
     int RoundNormalize(float _value)
     {
         if (_value == 0f)
@@ -173,9 +172,9 @@ public class PlayerRopeSwing : PlayerAbility
         // add exception state Up here
 
         int xInputDirection = RoundNormalize(InputManager.Instance.MoveHorizontal);
-        int currentXDirection = RoundNormalize(currentVelocityX);
+        int currentXDirection = RoundNormalize(targetVelocityX);
         float targetMaxSpeed = maxMoveSpeed * penaltySpeedRope;
-        bool isFasterThanMaxSpeed = Mathf.Abs(currentVelocityX) > targetMaxSpeed;
+        bool isFasterThanMaxSpeed = Mathf.Abs(targetVelocityX) > targetMaxSpeed;
         float decelerationWhenMaxSpeed = _controller.IsOnGround ? decelerationMaxSpeedOnGround : decelerationMaxSpeedOnAir;
         float deceleration = _controller.IsOnGround ? decelerationOnGround : decelerationOnAir;
         float acceleration = _controller.IsOnGround ? accelerationOnGround : accelerationOnAir;
@@ -186,29 +185,29 @@ public class PlayerRopeSwing : PlayerAbility
             {
                 if (!isFasterThanMaxSpeed)
                 {
-                    currentVelocityX += acceleration * Time.deltaTime;
+                    targetVelocityX += acceleration * Time.deltaTime;
 
-                    if (currentVelocityX > targetMaxSpeed)
+                    if (targetVelocityX > targetMaxSpeed)
                     {
-                        currentVelocityX = targetMaxSpeed;
+                        targetVelocityX = targetMaxSpeed;
                     }
                 }
             }
             else if (xInputDirection == -1) // 입력방향 <-
             {
-                currentVelocityX -= acceleration * Time.deltaTime;
+                targetVelocityX -= acceleration * Time.deltaTime;
             }
             else // 입력 0
             {
-                currentVelocityX -= deceleration * Time.deltaTime;
-                if (currentVelocityX < 0f)
+                targetVelocityX -= deceleration * Time.deltaTime;
+                if (targetVelocityX < 0f)
                 {
-                    currentVelocityX = 0f;
+                    targetVelocityX = 0f;
                 }
             }
             if (isFasterThanMaxSpeed)
             {
-                currentVelocityX -= decelerationWhenMaxSpeed * Time.deltaTime;
+                targetVelocityX -= decelerationWhenMaxSpeed * Time.deltaTime;
             }
         }
         else if (currentXDirection == -1) // 현재진행방향 <-
@@ -217,76 +216,81 @@ public class PlayerRopeSwing : PlayerAbility
             {
                 if (!isFasterThanMaxSpeed)
                 {
-                    currentVelocityX -= acceleration * Time.deltaTime;
-                    if (currentVelocityX < -targetMaxSpeed)
+                    targetVelocityX -= acceleration * Time.deltaTime;
+                    if (targetVelocityX < -targetMaxSpeed)
                     {
-                        currentVelocityX = -targetMaxSpeed;
+                        targetVelocityX = -targetMaxSpeed;
                     }
                 }
             }
             else if (xInputDirection == 1) // 입력방향 ->
             {
-                currentVelocityX += acceleration * Time.deltaTime;
+                targetVelocityX += acceleration * Time.deltaTime;
             }
             else // 입력 0
             {
-                currentVelocityX += deceleration * Time.deltaTime;
-                if (currentVelocityX > 0f)
+                targetVelocityX += deceleration * Time.deltaTime;
+                if (targetVelocityX > 0f)
                 {
-                    currentVelocityX = 0f;
+                    targetVelocityX = 0f;
                 }
             }
             if (isFasterThanMaxSpeed)
             {
-                currentVelocityX += decelerationWhenMaxSpeed * Time.deltaTime;
+                targetVelocityX += decelerationWhenMaxSpeed * Time.deltaTime;
             }
         }
         else if (xInputDirection == -1)
         {
-            currentVelocityX -= acceleration * Time.deltaTime;
-            if (currentVelocityX < -targetMaxSpeed)
+            targetVelocityX -= acceleration * Time.deltaTime;
+            if (targetVelocityX < -targetMaxSpeed)
             {
-                currentVelocityX = -targetMaxSpeed;
+                targetVelocityX = -targetMaxSpeed;
             }
         }
         else if (xInputDirection == 1)
         {
-            currentVelocityX += acceleration * Time.deltaTime;
-            if (currentVelocityX > targetMaxSpeed)
+            targetVelocityX += acceleration * Time.deltaTime;
+            if (targetVelocityX > targetMaxSpeed)
             {
-                currentVelocityX = targetMaxSpeed;
+                targetVelocityX = targetMaxSpeed;
             }
         }
     }
 
 
     float theta; // 초기각
-    float omega = 0f; // 각속도
 
     void UpdateTheta(Vector3 hookedPosition, Vector3 currentPosition)
     {
         float Xdistance = hookedPosition.x - currentPosition.x;
         float Ydistance = hookedPosition.y - currentPosition.y;
 
-        theta = Mathf.Atan2(Ydistance, Xdistance) * Mathf.Rad2Deg - 90f;
-        //Debug.Log("theta" + theta);
+        theta = Mathf.Atan2(Xdistance, Ydistance);
     }
 
     float angularAcceleration;
+    float centripetalAcceleration;
 
-    void TestVelocity()
+    void UpdatePendulumAcceleration()
     {
-        angularAcceleration = -ropeGravity / rope.chainMaxLength * Mathf.Sin(theta);
-        //Debug.Log("angularAcceleration" + angularAcceleration);
+        angularAcceleration = -ropeGravityAbs * Mathf.Sin(theta);
+        centripetalAcceleration = ropeGravityAbs / rope.chainMaxLength * Mathf.Cos(theta);
     }
 
-    private void TestMove()
-    {
-        omega += angularAcceleration * Time.deltaTime;
-        theta += omega * Time.deltaTime;
+    float rotateSpeed = 0.01f;
 
-        _controller.AddXVelocity(angularAcceleration * Time.deltaTime);
-        //Debug.Log("velocity" + _controller.controllerPhysics.velocity);
+    private void AddVelocity()
+    {
+        Chain.ChainNode lastRopeNode = rope.nodes[rope.chainMaxCount - 1];
+        Vector2 playerPosition = _player.transform.position;
+        Vector2 toOriginChainNode = (Vector2)lastRopeNode.position - playerPosition;
+
+        Vector2 t = (toOriginChainNode).normalized * centripetalAcceleration;
+        Vector2 g = ((Vector2)(Vector3.Cross(new Vector3(0, 0, 1), toOriginChainNode))).normalized * angularAcceleration ;
+
+        Debug.Log(t + " , " + g + " t + g : " + (t + g));
+        _controller.AddVelocity((t + g) * Time.deltaTime);
     }
 
 }
