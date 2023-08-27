@@ -362,10 +362,10 @@ MonoBehaviour:
   rope: {fileID: 370860889}
   ropeSpeed: 100
   ropeGravity: -20
-  maxMoveSpeed: 6
+  maxMoveSpeed: 30
   accelerationOnAir: 300
   accelerationOnGround: 200
-  decelerationOnAir: 200
+  decelerationOnAir: 0.1
   decelerationOnGround: 200
   decelerationMaxSpeedOnAir: 0.2
   decelerationMaxSpeedOnGround: 0.2
@@ -804,7 +804,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1383578025
 Transform:
   m_ObjectHideFlags: 0
