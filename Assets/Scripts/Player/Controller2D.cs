@@ -46,7 +46,7 @@ public class Controller2D : MonoBehaviour
         public float epsilon = 0.0001f;
         public Vector2 maxVelocity = new Vector2(100f, 100f);
 
-        [Header("Áß·Â °ü·Ã ¼³Á¤")]
+        [Header("ï¿½ß·ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½")]
         public float gravity = -30f;
         [Range(0f, 2f)]
         public float jumpGravityScale = 1f;
@@ -61,6 +61,10 @@ public class Controller2D : MonoBehaviour
         public CollisionInfo collisions;
         [HideInInspector]
         public CollisionInfo prevCollisions;
+
+        [Header("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½")]
+        public DemoRope.Node ropeEndNode;
+        public Vector2 lastVelocity;
     }
 
     [Serializable]
@@ -130,25 +134,37 @@ public class Controller2D : MonoBehaviour
 
     void UpdateController()
     {
-        ApplyGravity();
+        if (_player.playerInfo.state == Player.State.ROPE)
+        {
+            transform.position = controllerPhysics.ropeEndNode.pos;
+        } else
+        {
+            ApplyGravity();
 
-        ReadyForRaycast();
+            ReadyForRaycast();
 
-        UpdateRaycastOrigins();
-        controllerPhysics.collisions.Reset();
+            UpdateRaycastOrigins();
+            controllerPhysics.collisions.Reset();
 
-        controllerPhysics.prevCollisions = controllerPhysics.collisions;
-        HorizontalCollisions(1);
-        HorizontalCollisions(-1);
-        BelowCollision();
-        AboveCollison();
+            controllerPhysics.prevCollisions = controllerPhysics.collisions;
+            HorizontalCollisions(1);
+            HorizontalCollisions(-1);
+            BelowCollision();
+            AboveCollison();
 
-        transform.Translate(_deltaPos, Space.Self);
-        //Debug.Log("deltaPos: " + _deltaPos);
-        controllerPhysics.velocity = _deltaPos / Time.deltaTime;
+            transform.Translate(_deltaPos, Space.Self);
+            controllerPhysics.velocity = _deltaPos / Time.deltaTime;
 
-        controllerPhysics.externalForce.x = 0;
-        controllerPhysics.externalForce.y = 0;
+            controllerPhysics.externalForce.x = 0;
+            controllerPhysics.externalForce.y = 0;
+        }
+    }
+
+    public void SetRopeMode(DemoRope.Node endNode)
+    {
+        controllerPhysics.ropeEndNode = endNode;
+        controllerPhysics.lastVelocity = controllerPhysics.velocity;
+        _player.ChangeState(Player.State.ROPE);
     }
 
     public void SetVelocity(Vector3 velocity)
@@ -368,7 +384,7 @@ public class Controller2D : MonoBehaviour
         rayOriginLeft.x += _deltaPos.x;
         rayOriginRight.x += _deltaPos.x;
 
-        // TODO: °¢µµ ÀÖ´Â ¶¥¿¡¼­ °È±â ½Ã °¢µµ °è»ê ÇÊ¿ä - ±¸Çö Ãß°¡ ÇÊ¿ä
+        // TODO: ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½È±ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½ - ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ ï¿½Ê¿ï¿½
         /*
         RaycastHit2D leftHit, rightHit, targetHit;
 
@@ -494,7 +510,7 @@ public class Controller2D : MonoBehaviour
     {
         RaycastHit2D boxHit = Physics2D.BoxCast(origin, size, angle, direction, distance, layerMask);
 
-        // TODO: ¹Ú½º ±×¸®±â (ÀÏ´Ü ³Ñ±è)
+        // TODO: ï¿½Ú½ï¿½ ï¿½×¸ï¿½ï¿½ï¿½ (ï¿½Ï´ï¿½ ï¿½Ñ±ï¿½)
 
         return boxHit;
     }
