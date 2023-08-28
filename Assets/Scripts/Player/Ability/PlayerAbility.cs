@@ -7,6 +7,7 @@ public abstract class PlayerAbility : MonoBehaviour
 {
     protected Player _player;
     protected Controller2D _controller;
+    protected InputManager _input;
 
     protected float _horizontalMove;
     protected float _verticalMove;
@@ -42,6 +43,7 @@ public abstract class PlayerAbility : MonoBehaviour
     {
         _player = GetComponentInParent<Player>();
         _controller = GetComponent<Controller2D>();
+        _input = InputManager.Instance;
     }
 
     protected void PreHandleInput()
