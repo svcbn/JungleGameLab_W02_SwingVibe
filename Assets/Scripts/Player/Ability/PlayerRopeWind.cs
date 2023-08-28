@@ -20,7 +20,7 @@ public class PlayerRopeWind : PlayerAbility
         // when jump button pressed && state == rope state
         if (_jumpButtonClicked)
         {
-            StartCoroutine(Wind());
+            //StartCoroutine(Wind());
         }
     }
 
