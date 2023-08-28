@@ -145,24 +145,27 @@ public class Controller2D : MonoBehaviour
             transform.position = controllerPhysics.ropeEndNode.pos;
         } else
         {*/
-            ApplyGravity();
+        ApplyGravity();
 
-            ReadyForRaycast();
+        ReadyForRaycast();
 
-            UpdateRaycastOrigins();
-            controllerPhysics.collisions.Reset();
+        UpdateRaycastOrigins();
+        controllerPhysics.collisions.Reset();
 
-            controllerPhysics.prevCollisions = controllerPhysics.collisions;
-            HorizontalCollisions(1);
-            HorizontalCollisions(-1);
-            BelowCollision();
-            AboveCollison();
+        controllerPhysics.prevCollisions = controllerPhysics.collisions;
+        HorizontalCollisions(1);
+        HorizontalCollisions(-1);
+        BelowCollision();
+        AboveCollison();
 
-            transform.Translate(_deltaPos, Space.Self);
+
+        transform.Translate(_deltaPos, Space.Self);
+
         if (_player.playerInfo.state != Player.State.ROPE)
         {
             controllerPhysics.velocity = _deltaPos / Time.deltaTime;
-        } else
+        }
+        else
         {
             if (WasOnGound && !IsOnGround)
             {
@@ -170,8 +173,8 @@ public class Controller2D : MonoBehaviour
                 controllerPhysics.externalForce = Vector3.zero;
             }
         }
-            controllerPhysics.externalForce.x = 0;
-            controllerPhysics.externalForce.y = 0;
+        controllerPhysics.externalForce.x = 0;
+        controllerPhysics.externalForce.y = 0;
         //}
     }
 

@@ -71,6 +71,15 @@ public partial class @BaseInputAction: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ExitButton"",
+                    ""type"": ""Button"",
+                    ""id"": ""b41db8b9-e553-4051-82e2-c23d4226f426"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -260,6 +269,28 @@ public partial class @BaseInputAction: IInputActionCollection2, IDisposable
                     ""action"": ""Aim"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c130da41-cda5-4304-b842-415926b8aad6"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""ExitButton"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""34732376-ee4e-450a-ac95-65cade6f3426"",
+                    ""path"": ""<Gamepad>/start"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""ExitButton"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -334,6 +365,7 @@ public partial class @BaseInputAction: IInputActionCollection2, IDisposable
         m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
         m_Player_Hook = m_Player.FindAction("Hook", throwIfNotFound: true);
         m_Player_Dash = m_Player.FindAction("Dash", throwIfNotFound: true);
+        m_Player_ExitButton = m_Player.FindAction("ExitButton", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -400,6 +432,7 @@ public partial class @BaseInputAction: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Jump;
     private readonly InputAction m_Player_Hook;
     private readonly InputAction m_Player_Dash;
+    private readonly InputAction m_Player_ExitButton;
     public struct PlayerActions
     {
         private @BaseInputAction m_Wrapper;
@@ -409,6 +442,7 @@ public partial class @BaseInputAction: IInputActionCollection2, IDisposable
         public InputAction @Jump => m_Wrapper.m_Player_Jump;
         public InputAction @Hook => m_Wrapper.m_Player_Hook;
         public InputAction @Dash => m_Wrapper.m_Player_Dash;
+        public InputAction @ExitButton => m_Wrapper.m_Player_ExitButton;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -433,6 +467,9 @@ public partial class @BaseInputAction: IInputActionCollection2, IDisposable
             @Dash.started += instance.OnDash;
             @Dash.performed += instance.OnDash;
             @Dash.canceled += instance.OnDash;
+            @ExitButton.started += instance.OnExitButton;
+            @ExitButton.performed += instance.OnExitButton;
+            @ExitButton.canceled += instance.OnExitButton;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -452,6 +489,9 @@ public partial class @BaseInputAction: IInputActionCollection2, IDisposable
             @Dash.started -= instance.OnDash;
             @Dash.performed -= instance.OnDash;
             @Dash.canceled -= instance.OnDash;
+            @ExitButton.started -= instance.OnExitButton;
+            @ExitButton.performed -= instance.OnExitButton;
+            @ExitButton.canceled -= instance.OnExitButton;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -521,5 +561,6 @@ public partial class @BaseInputAction: IInputActionCollection2, IDisposable
         void OnJump(InputAction.CallbackContext context);
         void OnHook(InputAction.CallbackContext context);
         void OnDash(InputAction.CallbackContext context);
+        void OnExitButton(InputAction.CallbackContext context);
     }
 }
