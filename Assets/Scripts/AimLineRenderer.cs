@@ -23,7 +23,6 @@ public class AimLineRenderer : MonoBehaviour
 
     private void Awake()
     {
-        PlayerInput input = GameObject.Find("GameManagers").GetComponent<PlayerInput>();
         mask = LayerMask.GetMask("Ground", "NotPass", "TargetableObject");
         aimCircle.SetActive(false);
     }
