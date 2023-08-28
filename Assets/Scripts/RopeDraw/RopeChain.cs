@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting.ReorderableList.Element_Adder_Menu;
+using UnityEditor;
 using UnityEngine;
 
 public class RopeChain : MonoBehaviour
@@ -33,6 +34,7 @@ public class RopeChain : MonoBehaviour
     public float maxNodeLength = 0.3f;
     public float catenaryInitialA = 0.01f;
     public float catenaryAccuracy = 0.0001f;
+    public GameObject chain;
 
     private LineRenderer lineRenderer;
     private Vector2 _startPos;
@@ -41,6 +43,7 @@ public class RopeChain : MonoBehaviour
     private float _ropeLen;
     private Mode _mode = Mode.CANCELED;
     private Player _player;
+    private List<GameObject> _instantiatedChains;
 
     public Vector2 StartPoint { get => _startPos; }
     public float RopeLength { get => _ropeLen; }
@@ -61,6 +64,7 @@ public class RopeChain : MonoBehaviour
 
         lineRenderer.enabled = true;
         _nodes[0].pos = _startPos;
+        _nodes.Last().pos = _player.transform.position;
         
         if (_mode == Mode.PENDULUM)
         {
@@ -81,10 +85,22 @@ public class RopeChain : MonoBehaviour
         {
             if (i == 0) {
                 _nodes[i].pos = _startPos;
-            } else if (i != _nodeNum - 1) {
-                _nodes[i].pos = Vector2.Lerp(_nodes[0].pos, _nodes.Last().pos, i / (_nodeNum - 1));
+            } {
+                _nodes[i].pos = Vector2.Lerp(_nodes[0].pos, _nodes.Last().pos, ((float)i) / (_nodeNum - 1));
+                //Debug.Log(i + " " +Vector2.Lerp(_nodes[0].pos, _nodes.Last().pos, ((float)i) / (_nodeNum - 1)));
             }
-            lineRenderer.SetPosition(i, _nodes[i].pos);
+
+            if (i > 0) {
+                Vector2 dir = _nodes[i].pos - _nodes[i].prev.pos;
+                float rotate = Vector2.SignedAngle(-dir, Vector2.down);
+                GameObject c = _instantiatedChains[i - 1];
+                c.transform.position = _nodes[i].pos;
+                //Debug.Log(i + " " +_nodes[i].pos);
+                c.transform.rotation = Quaternion.Euler(0, 0, -rotate);
+                //c.GetComponent<SpriteRenderer>().color = i % 2 == 0 ? new Color(0.5f, 0.5f, 1, 0.3f) : new Color(1f, 0.5f, 0.9f, 0.3f);
+                c.GetComponent<SpriteRenderer>().color = new Color(0f, 0.9f, 0.9f, 0.3f);
+            }
+            //lineRenderer.SetPosition(i, _nodes[i].pos);
         }
     }
 
@@ -118,7 +134,7 @@ public class RopeChain : MonoBehaviour
         float x, y;
         for (int i = 0; i < _nodeNum; i++)
         {
-            x = Mathf.Lerp(_startPos.x, endPos.x, i / (_nodeNum - 1));
+            x = Mathf.Lerp(_startPos.x, endPos.x, ((float)i) / (_nodeNum - 1));
             y = CalculateCatenary(x, a, b, c);
             _nodes[i].pos.x = x;
             _nodes[i].pos.y = y;
@@ -137,6 +153,8 @@ public class RopeChain : MonoBehaviour
 
     public Vector2 CreateRope(Vector2 startPos, Vector2 endPos, Player player, bool isPendulum=true)
     {
+        _instantiatedChains = new List<GameObject>();
+
         _startPos = startPos;
         _player = player;
         _mode = isPendulum ? Mode.PENDULUM : Mode.CATENARY;
@@ -156,12 +174,23 @@ public class RopeChain : MonoBehaviour
                 _nodes.Last().next = node;
             }
             _nodes.Add(node);
+
+            if (i != 0) {
+                _instantiatedChains.Add(Instantiate(chain));
+            }
         }
         
         return _nodes.Last().pos;
     }
 
     public void CancelRope() {
+        if (_instantiatedChains != null) {
+            foreach(GameObject chain in _instantiatedChains) {
+                Destroy(chain);
+            }
+        }
+        _instantiatedChains = null;
+
         _nodes = null;
         _mode = Mode.CANCELED;
     }
