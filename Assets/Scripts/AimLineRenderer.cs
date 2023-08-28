@@ -18,12 +18,13 @@ public class AimLineRenderer : MonoBehaviour
     Vector2 targetPos;
     bool isGamepad = false;
     public GameObject aimCircle;
+    public GameObject padAim;
 
 
     private void Awake()
     {
         PlayerInput input = GameObject.Find("GameManagers").GetComponent<PlayerInput>();
-        mask = LayerMask.GetMask("Ground", "NotPass");
+        mask = LayerMask.GetMask("Ground", "NotPass", "TargetableObject");
         aimCircle.SetActive(false);
     }
 
@@ -35,6 +36,7 @@ public class AimLineRenderer : MonoBehaviour
         {
             aimPosition = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
             aimVec = (aimPosition - (Vector2)transform.position).normalized;
+            padAim.transform.rotation = Quaternion.FromToRotation(Vector2.right, aimVec);
             // 마우스 위치 디버그 로그
             //Debug.Log("Mouse Position: " + aimPosition);
         }
@@ -42,16 +44,17 @@ public class AimLineRenderer : MonoBehaviour
         {
             // 게임패드 조준 위치 계산            
             aimVec = (new Vector2(InputManager.Instance.AimHorizontal, InputManager.Instance.AimVertical)).normalized;
-           
+            padAim.transform.rotation = Quaternion.FromToRotation(Vector2.right, aimVec);
+
         }
         // 충돌 검사
 
         checkRayCollision();
         Debug.DrawRay(transform.position, (mainHit.point - (Vector2)transform.position).normalized * maxLineLength, Color.red);
-        aimVec = (mainHit.point - (Vector2)transform.position).normalized;
+        aimVec = (targetPos - (Vector2)transform.position).normalized;
         if (mainHit.collider != null)
         {
-            float length = mainHit.distance;
+            float length = Vector2.Distance(transform.position, targetPos);
             // 조준선 그리기 및 업데이트
             if (length > maxLineLength)
             {
@@ -62,7 +65,7 @@ public class AimLineRenderer : MonoBehaviour
             }
             else
             {
-                ropeChain.TargetPosition = mainHit.point;
+                ropeChain.TargetPosition = targetPos;
                 DrawAimLine(aimVec, length);
                 aimCircle.SetActive(true);
                 ropeChain.CanCreate = true;
@@ -74,6 +77,11 @@ public class AimLineRenderer : MonoBehaviour
             aimCircle.SetActive(false);
             ropeChain.CanCreate = false;
         }
+    }
+    
+    public bool checkGamePad()
+    {
+        return isGamepad;
     }
 
     private void OnEnable()
@@ -133,14 +141,24 @@ public class AimLineRenderer : MonoBehaviour
 
     private bool checkRayCollision()
     {
-        angles = new float[3] { 0, rayAngle, -rayAngle };
         RaycastHit2D hit = Physics2D.Raycast(this.transform.position, aimVec, maxLineLength, mask);
         RaycastHit2D hitLeft = Physics2D.Raycast(this.transform.position, Quaternion.Euler(0f, 0f, rayAngle) * aimVec, maxLineLength, mask);
         RaycastHit2D hitRight = Physics2D.Raycast(this.transform.position, Quaternion.Euler(0f, 0f, -rayAngle) * aimVec, maxLineLength, mask);
         RaycastHit2D[] hits = { hit, hitLeft, hitRight };
+        angles = new float[3] { 0, rayAngle, -rayAngle };
         Debug.DrawRay(transform.position, aimVec.normalized * maxLineLength);
         Debug.DrawRay(transform.position, Quaternion.Euler(0f, 0f, rayAngle) * aimVec.normalized * maxLineLength);
         Debug.DrawRay(transform.position, Quaternion.Euler(0f, 0f, -rayAngle) * aimVec.normalized * maxLineLength);
+
+        for (int i = 0; i < hits.Length; i++)
+        {
+            if (hits[i].collider != null && hits[i].collider.gameObject.CompareTag("Target"))
+            {
+                mainHit = hits[i];
+                targetPos = mainHit.collider.gameObject.transform.position;
+                return true;
+            }
+        }
 
         if (hits[0].collider == null)
         {
