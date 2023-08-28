@@ -14,6 +14,8 @@ public class MenuManager : MonoBehaviour
 	public GameObject UIRestartButton;
 	public Vector3 restartPosition;
 
+	public Transform respawnPoint;
+
     private void Start()
     {
 		SetMainMenu();
@@ -22,10 +24,11 @@ public class MenuManager : MonoBehaviour
 	{
 		if (InputManager.Instance.ExitButton)
 		{
-			if (!PauseMenu.active)
-				SetPauseMenu();
-			else
-				StartButton();
+			//if (!PauseMenu.active)
+			//	SetPauseMenu();
+			//else
+			//	StartButton();
+			Player.transform.position = respawnPoint.position;
 		}
 	}
 
