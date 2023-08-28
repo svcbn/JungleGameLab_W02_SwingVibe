@@ -18,6 +18,7 @@ public class AimLineRenderer : MonoBehaviour
     Vector2 targetPos;
     bool isGamepad = false;
     public GameObject aimCircle;
+    public GameObject padAim;
 
 
     private void Awake()
@@ -35,6 +36,7 @@ public class AimLineRenderer : MonoBehaviour
         {
             aimPosition = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
             aimVec = (aimPosition - (Vector2)transform.position).normalized;
+            padAim.transform.rotation = Quaternion.FromToRotation(Vector2.right, aimVec);
             // 마우스 위치 디버그 로그
             //Debug.Log("Mouse Position: " + aimPosition);
         }
@@ -42,7 +44,8 @@ public class AimLineRenderer : MonoBehaviour
         {
             // 게임패드 조준 위치 계산            
             aimVec = (new Vector2(InputManager.Instance.AimHorizontal, InputManager.Instance.AimVertical)).normalized;
-           
+            padAim.transform.rotation = Quaternion.FromToRotation(Vector2.right, aimVec);
+
         }
         // 충돌 검사
 
@@ -74,6 +77,11 @@ public class AimLineRenderer : MonoBehaviour
             aimCircle.SetActive(false);
             rope.canCreateChain = false;
         }
+    }
+    
+    public bool checkGamePad()
+    {
+        return isGamepad;
     }
 
     private void OnEnable()
