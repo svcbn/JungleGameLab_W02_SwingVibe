@@ -36,6 +36,8 @@ namespace W02
         private InputAction _hookAction;
         private InputAction _dashAction;
 
+        public Gamepad gamepad;
+
         protected override void Init()
         {
             MoveHorizontal = 0;
@@ -54,6 +56,8 @@ namespace W02
             _dashAction = _action.Player.Dash;
 
             EnableActions();
+
+            gamepad = Gamepad.current;
         }
 
         protected void EnableActions()
@@ -188,5 +192,29 @@ namespace W02
             DashButton = false;
             OnDashReleased?.Invoke();
         }
+
+        /// <summary>
+        /// Active Gampad's Vibration with Intensity & Duration
+        /// </summary>
+        /// <param name="duration"> (min)0.1f ~ (max)5.0f / time per try </param>
+        /// <param name="intensity"> (min)0.1f ~ (max)1.0f / default 0.5 / off at 0 </param>
+        public void Vibration(float duration, float intensity = 0.5f)
+        {
+            StartCoroutine(StartVibration(duration, intensity));
+        }
+
+        public void StopVibration()
+        {
+            gamepad.SetMotorSpeeds(0, 0);
+        }
+
+        IEnumerator StartVibration(float _duration, float _intensity)
+        {
+            gamepad.SetMotorSpeeds(_intensity, _intensity);
+            yield return new WaitForSeconds(_duration);
+            gamepad.SetMotorSpeeds(0, 0);
+        }
+
+        
     }
 }

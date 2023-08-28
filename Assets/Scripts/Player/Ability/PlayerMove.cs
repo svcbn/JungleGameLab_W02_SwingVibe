@@ -10,6 +10,7 @@ namespace W02
     public class PlayerMove : PlayerAbility
     {
         [HideInInspector]public GameObject Look;
+        //public GameObject Wing;
 
         float currentVelocityX = 0;
         float velocityXSmoothing;
@@ -184,10 +185,14 @@ namespace W02
             if(_lookDir == 1)
             {
                 Look.transform.localScale = new Vector3(1, 1, 1);
+                //Wing.transform.localScale = new Vector3(1, 0.5f, 1);
+                //Wing.transform.localRotation = Quaternion.Euler(0f, 0f, -10f);
             }
             else if(_lookDir == -1)
             {
                 Look.transform.localScale = new Vector3(-1, 1, 1);
+                //Wing.transform.localScale = new Vector3(-1, 0.5f, 1);
+                //Wing.transform.localRotation = Quaternion.Euler(0f, 0f, 10f);
 
             }
         }
