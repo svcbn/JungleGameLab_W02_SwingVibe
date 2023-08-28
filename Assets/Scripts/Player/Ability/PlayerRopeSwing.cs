@@ -60,6 +60,7 @@ public class PlayerRopeSwing : PlayerAbility
             else
             {
                 _player.playerInfo.ropeState = Player.RopeState.HOLDING;
+                return;
             }
         }
 
@@ -101,6 +102,12 @@ public class PlayerRopeSwing : PlayerAbility
         if (!ropeChain.CreateRope(out revisedPlayerPos, targetPos, playerPosition, _player))
             return false;
         _player.transform.position = revisedPlayerPos;
+
+        Vector2 ropeDir = ropeChain.StartPoint - revisedPlayerPos;
+        if (Vector2.Dot(ropeDir, Vector2.down) > 0 && !_controller.IsOnGround) {
+            _controller.SetVelocity(Vector2.zero);
+            _controller.IsRopeFalling = true;
+        }
 
         if (_controller.controllerPhysics.velocity.magnitude > 0.1f && Math.Abs(_horizontalMove) > 0.1f)
         {
@@ -151,6 +158,7 @@ public class PlayerRopeSwing : PlayerAbility
                 Vector2 targetVel = Vector2.Dot(tangentVec, (Vector2)_controller.controllerPhysics.velocity) * tangentVec.normalized;
                 _player.transform.position = ropeChain.StartPoint + ropeDir.normalized * ropeChain.RopeLength;
                 _controller.SetVelocity(targetVel * 0.05f);
+                return;
             }
             if (_controller.IsRopeFalling) {
                 return;
