@@ -7,11 +7,11 @@
 - 작업 인원 : 4명
 - 제작 기간 : 2023.08.22 ~ 2023.08.29 (7일)
   
-![](./썸네일.png)
+![](./썸네일.gif)  
 
 ---
 프로젝트 소개 - [Notion](https://www.notion.so/W02_9-_-9a526055a7024ce699401efa9a53026b?pvs=4)  
 
 프로젝트 영상 - [추가 예정]()  
 
-프로젝트 다운로드 - [Download ZIP]()
+프로젝트 다운로드 - [Download ZIP](https://github.com/YuTaehwan/W02-Demo/raw/main/Build.zip)
