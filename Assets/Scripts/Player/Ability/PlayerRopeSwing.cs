@@ -35,6 +35,14 @@ public class PlayerRopeSwing : PlayerAbility
     float centripetalAcceleration;
     float rotateSpeed = 0.01f;
 
+    AimLineRenderer aimLineRenderer;
+
+    private void Start()
+    {
+        aimLineRenderer = GetComponent<AimLineRenderer>();
+    }
+
+    public bool warp = false;
     protected override void HandleInput()
     {
         //hook버튼 클릭시 state변경
@@ -43,6 +51,7 @@ public class PlayerRopeSwing : PlayerAbility
         {
             _player.playerInfo.ropeState = Player.RopeState.HOOKED;
             _player.ChangeState(Player.State.ROPE);
+            warp = true;
         }
 
         //HookedRope
@@ -55,7 +64,7 @@ public class PlayerRopeSwing : PlayerAbility
             {
                 ropeChain.CancelRope();
                 _player.playerInfo.ropeState = Player.RopeState.FAILED;
-                _player.ChangeState(Player.State.IDLE);
+                _player.ChangeState(Player.State.WALKING);
             }
             else
             {
@@ -67,6 +76,7 @@ public class PlayerRopeSwing : PlayerAbility
         //로프 타는중
         if (_hookButtonClicked && _player.playerInfo.ropeState == Player.RopeState.HOLDING)
         {
+
             if (ropeChain.RopeNodeCount != 0)
             {
                 UpdateTheta(ropeChain.StartPoint, _player.transform.position);
@@ -78,6 +88,7 @@ public class PlayerRopeSwing : PlayerAbility
             }
 
             HoldingRope();
+            
         }
 
         //로프 실패
@@ -85,7 +96,8 @@ public class PlayerRopeSwing : PlayerAbility
         {
             ropeChain.CancelRope();
             _player.playerInfo.ropeState = Player.RopeState.FAILED;
-            _player.ChangeState(Player.State.IDLE);
+            _player.ChangeState(Player.State.WALKING);
+            aimLineRenderer.canWarp = true;
 
             StopAllCoroutines();
             _input.StopVibration();

@@ -32,9 +32,14 @@ namespace W02
 
         float moveSpeed = 6f;
 
+        private void Start()
+        {
+            _player.ChangeState(Player.State.WALKING);
+        }
+
         protected override void HandleInput()
         {
-            if (_player.playerInfo.state == Player.State.ROPE)
+            if (_player.playerInfo.state == Player.State.ROPE || _player.playerInfo.state == Player.State.IDLE)
             {
                 return;
             }
