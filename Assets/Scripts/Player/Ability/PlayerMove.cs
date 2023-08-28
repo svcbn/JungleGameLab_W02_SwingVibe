@@ -9,7 +9,7 @@ namespace W02
     [RequireComponent(typeof(Controller2D))]
     public class PlayerMove : PlayerAbility
     {
-        [HideInInspector]public GameObject Look;
+        public GameObject Look;
         //public GameObject Wing;
 
         float currentVelocityX = 0;
