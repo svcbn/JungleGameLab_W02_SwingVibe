@@ -12,8 +12,6 @@ public class Player : MonoBehaviour
     {
         IDLE,
         WALKING,
-        WALL_GRAB,
-        JUMPING,
         FALLING,
         DIZZY,
         ROPE,
@@ -111,15 +109,7 @@ public class Player : MonoBehaviour
                 }
 
                 break;
-            case State.JUMPING:
-                // put bool here
-
-                break;
             case State.WALKING:
-                // put bool here
-
-                break;
-            case State.WALL_GRAB:
                 // put bool here
 
                 break;

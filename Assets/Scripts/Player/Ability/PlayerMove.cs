@@ -9,7 +9,7 @@ namespace W02
     [RequireComponent(typeof(Controller2D))]
     public class PlayerMove : PlayerAbility
     {
-
+        [HideInInspector]public GameObject Look;
 
         float currentVelocityX = 0;
         float velocityXSmoothing;
@@ -137,6 +137,8 @@ namespace W02
                     currentVelocityX = targetMaxSpeed;
                 }
             }
+
+            LookDirection(currentXDirection);
         }
 
 
@@ -175,6 +177,19 @@ namespace W02
                 return 1;
             }
             return -1;
+        }
+
+        void LookDirection(int _lookDir)
+        {
+            if(_lookDir == 1)
+            {
+                Look.transform.localScale = new Vector3(1, 1, 1);
+            }
+            else if(_lookDir == -1)
+            {
+                Look.transform.localScale = new Vector3(-1, 1, 1);
+
+            }
         }
     }
 }

@@ -123,7 +123,7 @@ public class Controller2D : MonoBehaviour
         Rigidbody rigidbody = GetComponent<Rigidbody>();
         _collider = GetComponent<BoxCollider2D>();
         CalculateRaySpacing();
-        collisionMask = LayerMask.GetMask("Ground");
+        collisionMask = LayerMask.GetMask("Ground", "NotPass");
         _player = GetComponent<Player>();
     }
 
