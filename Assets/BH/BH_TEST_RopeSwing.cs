@@ -311,15 +311,7 @@ public class BH_TEST_RopeSwing : PlayerAbility
         _controller.AddVelocity((t + g) * Time.deltaTime);
     }
 
-    //IEnumerator testVibe()
-    //{
-    //    _input.gamepad.SetMotorSpeeds(1f, 0.1f);
-    //    yield return new WaitForSeconds(1);
-    //    _input.gamepad.SetMotorSpeeds(0.1f, 1f);
-    //    yield return new WaitForSeconds(1);
-    //    _input.gamepad.SetMotorSpeeds(0f, 0f);
-
-    //}
+    
 
 
     bool isVibe = false;
