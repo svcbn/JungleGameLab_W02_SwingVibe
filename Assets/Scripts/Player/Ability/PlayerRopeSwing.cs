@@ -149,11 +149,11 @@ public class PlayerRopeSwing : PlayerAbility
     {
         Vector2 translatedVector;
 
-        Chain.ChainNode lastRopeNode = rope.nodes[rope.chainMaxCount - 1];
+        /*Chain.ChainNode lastRopeNode = rope.nodes[rope.chainMaxCount - 1];
         Vector2 playerPosition = _player.transform.position;
-        Vector3 toOriginChainNode = (ropeDirection);
+        Vector3 toOriginChainNode = (ropeDirection);*/
         //Debug.DrawRay(playerPosition, toOriginChainNode, Color.red);
-        Vector3 playerMoveVector = Vector3.Cross(new Vector3(0, 0, -1), toOriginChainNode);
+        Vector3 playerMoveVector = Vector3.Cross(new Vector3(0, 0, -1), ropeDirection);
 
 
         if (dir < 0)
