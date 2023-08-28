@@ -6,6 +6,8 @@ using W02;
 public class AimLineRenderer : MonoBehaviour
 {
     public LineRenderer lineRenderer;
+    public float maxLineLength;
+    public Chain rope;
     Vector2 aimPosition;
     LayerMask mask;
     InputUser user;
@@ -44,15 +46,33 @@ public class AimLineRenderer : MonoBehaviour
         {
             float length = hit.distance;
             // 조준선 그리기 및 업데이트
-            DrawAimLine(aimVec, length);
-            aimCircle.SetActive(true);
+            if (length > maxLineLength)
+            {
+                length = maxLineLength;
+                DrawAimLine(aimVec, 0);
+                aimCircle.SetActive(false);
+                rope.canCreateChain = false;
+            }
+            else
+            {
+                DrawAimLine(aimVec, length);
+                aimCircle.SetActive(true);
+                rope.canCreateChain = true;
+            }
         }
         else
         {
-            float length = hit.distance;
-            // 조준선 그리기 및 업데이트
-            DrawAimLine(aimVec, length);
+            DrawAimLine(aimVec, 0);
             aimCircle.SetActive(false);
+            rope.canCreateChain = false;
+            // 조준선 그리기 및 업데이트
+            //    float length = hit.distance;
+            //    if (length > maxLineLength)
+            //    {
+            //        length = maxLineLength;
+            //    }
+            //    DrawAimLine(aimVec, length);
+            //
         }
     }
 

@@ -44,7 +44,12 @@ public class PlayerRopeSwing : PlayerAbility
                 && _player.playerInfo.ropeState == Player.RopeState.HOOKED)
         {
             //플레이어의 위치 조정 추가하기
-            CreateRope();
+            if (!CreateRope())
+            {
+                rope.ChainReset();
+                _player.playerInfo.ropeState = Player.RopeState.FAILED;
+                _player.ChangeState(Player.State.IDLE);
+            }
             _player.playerInfo.ropeState = Player.RopeState.HOLDING;
 
         } 
@@ -74,15 +79,17 @@ public class PlayerRopeSwing : PlayerAbility
 
     }
 
-    private void CreateRope()
+    private bool CreateRope()
     {
         Vector2 playerPosition = (Vector2)_player.transform.position;
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
         //rope.chainMaxLength = Vector2.Distance(playerPosition, mousePosition);
         float ropeLength = Vector2.Distance(playerPosition, mousePosition);
         _controller.SetVelocity(Vector2.zero);
-        rope.CreateChain(ropeLength);
+        if (!rope.CreateChain(ropeLength))
+            return false;
         rope.ChainConnect(playerPosition, mousePosition, ropeLength, 0.5f);
+        return true;
     }
 
     private void HoldingRope()

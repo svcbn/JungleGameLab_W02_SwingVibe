@@ -107,8 +107,13 @@ public class Chain : MonoBehaviour
 		this.nodes[this.chainNowCount - 1].isActive = true;
 	}
 
-	public void CreateChain(float chainLength)
+	public bool CreateChain(float chainLength)
 	{
+
+		if (!canCreateChain)
+        {
+			return false;	
+        }
 		this.chainMaxCount = Mathf.CeilToInt(chainLength / this.nodeHeight);
 		chainMaxLength = chainLength;
 		for (int i = 0; i <= this.chainMaxCount; i++)
@@ -122,6 +127,7 @@ public class Chain : MonoBehaviour
 		}
 		this.nodes[0].isFixed = (this.nodes[this.chainMaxCount].isFixed = true);
 		this.ChainReset();
+		return true;
 	}
 
 	public void ChainReset()
@@ -212,6 +218,8 @@ public class Chain : MonoBehaviour
 	private int chainNowCount;
 
 	public float chainMaxLength;
+
+	public bool canCreateChain;
 
 	private bool isLinear;
 
