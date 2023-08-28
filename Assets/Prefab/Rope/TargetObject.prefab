@@ -10,9 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 5833359261045243328}
   - component: {fileID: 4620970137847531624}
-  m_Layer: 8
+  m_Layer: 10
   m_Name: TargetObject
-  m_TagString: TargetObject
+  m_TagString: Target
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -26,7 +26,7 @@ Transform:
   m_GameObject: {fileID: 51729619935615289}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 16.764576, y: 2.2375205, z: -0.36049247}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 3, y: 3, z: 3}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3542874340113861058}
@@ -96,9 +96,9 @@ GameObject:
   - component: {fileID: 3542874340113861058}
   - component: {fileID: 1459049171063456705}
   - component: {fileID: 5151116675362846142}
-  m_Layer: 8
+  m_Layer: 10
   m_Name: Circle
-  m_TagString: TargetObject
+  m_TagString: Target
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -112,7 +112,7 @@ Transform:
   m_GameObject: {fileID: 6706994901329163737}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 3, y: 3, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5833359261045243328}

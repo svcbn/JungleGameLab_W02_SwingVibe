@@ -206,36 +206,6 @@ public class PlayerRopeSwing : PlayerAbility
         if (Mathf.Cos(theta) > Mathf.Cos(maxRopeAngle * Mathf.Deg2Rad)) {
             this._controller.SetVelocity(newVel);
         }
-        
-        // Vector2 velNorm = _controller.controllerPhysics.velocity.normalized;
-        // int xInputDirection = RoundNormalize(InputManager.Instance.MoveHorizontal);
-        // int currentXDirection = RoundNormalize(targetVelocityX);
-        // float speedDelta;
-
-        // if (xInputDirection == currentXDirection && xInputDirection != 0) {
-        //     speedDelta = accelerationOnAir * Time.deltaTime;
-        // } else {
-        //     speedDelta = -decelerationOnAir * Time.deltaTime;
-        // }
-
-        // float curSpeed = _controller.controllerPhysics.velocity.magnitude;
-        
-        // float maxSpeed = Mathf.Sqrt(2 * ropeGravityAbs * ropeChain.RopeLength * (Mathf.Cos(theta) - Mathf.Cos(maxRopeAngle)));
-        // Debug.Log(maxSpeed);
-        // float targetSpeed = curSpeed + speedDelta;
-        // if (targetSpeed > maxSpeed)
-        // {
-        //     targetSpeed = maxSpeed;
-        // }
-
-        // Vector2 playerPosition = _player.transform.position;
-        // Vector2 ropeDirection = ropeChain.StartPoint - playerPosition;
-        // Vector2 v1 = TranslateForce(velNorm * targetSpeed, ropeDirection, RoundNormalize(velNorm.x * targetSpeed));
-        // Vector2 nextMovePoint = (Vector2)playerPosition + v1 * Time.deltaTime;
-        // Vector2 nextMovePointToOriginChainNode = ropeChain.RopeLength * (ropeChain.StartPoint - (Vector2)nextMovePoint).normalized;
-        // Vector2 newMoveVector = -nextMovePointToOriginChainNode + ropeDirection;
-        
-        //this._controller.AddVelocity(newMoveVector);
 
         return;
     }
