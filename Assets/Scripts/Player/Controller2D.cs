@@ -127,7 +127,7 @@ public class Controller2D : MonoBehaviour
         _player = GetComponent<Player>();
     }
 
-    private void Update()
+    private void LateUpdate()
     {
         UpdateController();
     }
@@ -180,6 +180,10 @@ public class Controller2D : MonoBehaviour
     {
         this.controllerPhysics.velocity = velocity;
         this.controllerPhysics.externalForce = velocity;
+    }
+
+    public void SetRopeVelocity(Vector2 deltaVel, Vector2 ropeStartPos) {
+        
     }
 
     public void AddVelocity(Vector3 velocity)

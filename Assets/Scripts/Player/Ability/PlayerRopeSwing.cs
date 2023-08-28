@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.MPE;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using W02;
@@ -7,14 +8,8 @@ using W02;
 
 public class PlayerRopeSwing : PlayerAbility
 {
-    public Chain rope;
-    public float ropeSpeed = 10f;
-    public float ropeGravityAbs = 20f;
-    float targetVelocityX = 0;
-    float currentVelocityY = 0;
-    float direction;
-
     [Header("로프 최대 속력")] [SerializeField] float maxMoveSpeed = 6f;
+    [Header("로프 최대 각도")] [SerializeField] float maxRopeAngle = 110f;
 
     [Header("로프 공중 가속")] [SerializeField] float accelerationOnAir = 0.2f;
     [Header("로프 지상 가속")] [SerializeField] float accelerationOnGround = 0.2f;
@@ -29,6 +24,18 @@ public class PlayerRopeSwing : PlayerAbility
     [Header("로프 걸어다닐때 속도 감소치 (곱연산)")] [SerializeField] float penaltySpeedWalk = 0.6f;
     [Header("로프 걸때 속도 감소치 (곱연산)")] [SerializeField] float penaltySpeedRope = 1f;
 
+    //public Chain rope;
+    public RopeChain ropeChain;
+    public float ropeSpeed = 10f;
+    public float ropeGravityAbs = 20f;
+    float targetVelocityX = 0;
+    float currentVelocityY = 0;
+    float direction;
+    float theta; // 초기각
+    float angularAcceleration;
+    float centripetalAcceleration;
+    float rotateSpeed = 0.01f;
+
     protected override void HandleInput()
     {
         //hook버튼 클릭시 state변경
@@ -38,6 +45,7 @@ public class PlayerRopeSwing : PlayerAbility
             _player.playerInfo.ropeState = Player.RopeState.HOOKED;
             _player.ChangeState(Player.State.ROPE);
         }
+
         //HookedRope
         else if (_hookButtonClicked
                 && _player.playerInfo.state == Player.State.ROPE
@@ -54,32 +62,28 @@ public class PlayerRopeSwing : PlayerAbility
             {
                 _player.playerInfo.ropeState = Player.RopeState.HOLDING;
             }
+            CreateRope();
+            _player.playerInfo.ropeState = Player.RopeState.HOLDING;
+        }
 
-        } 
         //로프 타는중
         if (_hookButtonClicked && _player.playerInfo.ropeState == Player.RopeState.HOLDING)
         {
-            if (rope.nodes.Count != 0)
+            if (ropeChain.RopeNodeCount != 0)
             {
-
-                UpdateTheta(rope.nodes[rope.chainMaxCount - 1].position, _player.transform.position);
+                UpdateTheta(ropeChain.StartPoint, _player.transform.position);
                 UpdatePendulumAcceleration();
             }
             HoldingRope();
-
         }
 
         //로프 실패
         if (_player.playerInfo.ropeState == Player.RopeState.HOLDING && !_hookButtonClicked)
         {
-            rope.ChainReset();
+            ropeChain.CancelRope();
             _player.playerInfo.ropeState = Player.RopeState.FAILED;
             _player.ChangeState(Player.State.IDLE);
-
-            //속도보정
         }
-
-
     }
 
     private bool CreateRope()
@@ -94,73 +98,76 @@ public class PlayerRopeSwing : PlayerAbility
         _controller.SetVelocity(Vector2.zero);
         rope.ChainConnect(playerPosition, targetPos, ropeLength, 0.5f);
         return true;
+        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
+        _controller.SetVelocity(Vector2.zero);
+        _player.transform.position = ropeChain.CreateRope(mousePosition, playerPosition, _player);
     }
 
     private void HoldingRope()
     {
         CalculateVelocity();
-        if (_controller.IsOnGround && Vector2.Distance((Vector2)_player.transform.position, rope.nodes[rope.chainMaxCount - 1].position) <= rope.chainMaxLength)
+        if (_controller.IsOnGround && Vector2.Distance((Vector2)_player.transform.position, ropeChain.StartPoint) <= ropeChain.RopeLength)
         {
             _controller.SetXVelocity(targetVelocityX);
-            rope.nodes[0].position = _player.transform.position;
+            ropeChain.SetEndNodePos(_player.transform.position);
             return;
         }
         CalculateRopeSwinging();
-        //Debug.Log(" targetelocityX: " + targetVelocityX
-        //       + " theta: " + theta
-        //       + " angularAcceleration: " + angularAcceleration
-        //       + " Current velocity: " + _controller.controllerPhysics.velocity);
     }
+
     public void CalculateRopeSwinging()
     {
         AddVelocity();
         Vector2 playerPosition = _player.transform.position;
-        rope.nodes[0].position = playerPosition;
-        //Vector2 velocity = new Vector2(targetVelocityX, 0) + (Vector2)_controller.controllerPhysics.velocity;
 
-        Chain.ChainNode lastRopeNode = rope.nodes[rope.chainMaxCount - 1];
-        Vector2 ropeDirection = (Vector2)lastRopeNode.position - playerPosition;
+        Vector2 ropeDirection = ropeChain.StartPoint - playerPosition;
         Vector2 v1 = TranslateForce(new Vector2(targetVelocityX, 0), ropeDirection, RoundNormalize(targetVelocityX));
         Vector2 v3 = (v1);
 
         Vector2 nextMovePoint = (Vector2)playerPosition + v3 * 0.01f;
-        Vector2 nextMovePointToOriginChainNode = rope.chainMaxLength * (lastRopeNode.position - (Vector2)nextMovePoint).normalized;
+        Vector2 nextMovePointToOriginChainNode = ropeChain.RopeLength * (ropeChain.StartPoint - (Vector2)nextMovePoint).normalized;
         Vector2 newMoveVector = -nextMovePointToOriginChainNode + ropeDirection;
         this._controller.AddVelocity(newMoveVector);
+        // Vector2 velNorm = _controller.controllerPhysics.velocity.normalized;
+        // int xInputDirection = RoundNormalize(InputManager.Instance.MoveHorizontal);
+        // int currentXDirection = RoundNormalize(targetVelocityX);
+        // float speedDelta;
+
+        // if (xInputDirection == currentXDirection && xInputDirection != 0) {
+        //     speedDelta = accelerationOnAir * Time.deltaTime;
+        // } else {
+        //     speedDelta = -decelerationOnAir * Time.deltaTime;
+        // }
+
+        // float curSpeed = _controller.controllerPhysics.velocity.magnitude;
+        
+        // float maxSpeed = Mathf.Sqrt(2 * ropeGravityAbs * ropeChain.RopeLength * (Mathf.Cos(theta) - Mathf.Cos(maxRopeAngle)));
+        // Debug.Log(maxSpeed);
+        // float targetSpeed = curSpeed + speedDelta;
+        // if (targetSpeed > maxSpeed)
+        // {
+        //     targetSpeed = maxSpeed;
+        // }
+
+        // Vector2 playerPosition = _player.transform.position;
+        // Vector2 ropeDirection = ropeChain.StartPoint - playerPosition;
+        // Vector2 v1 = TranslateForce(velNorm * targetSpeed, ropeDirection, RoundNormalize(velNorm.x * targetSpeed));
+        // Vector2 nextMovePoint = (Vector2)playerPosition + v1 * Time.deltaTime;
+        // Vector2 nextMovePointToOriginChainNode = ropeChain.RopeLength * (ropeChain.StartPoint - (Vector2)nextMovePoint).normalized;
+        // Vector2 newMoveVector = -nextMovePointToOriginChainNode + ropeDirection;
+        
+        //this._controller.AddVelocity(newMoveVector);
 
         return;
-        //if (Vector2.Distance((Vector2)playerPosition + newMoveVector * Time.deltaTime, lastRopeNode.position) > rope.chainMaxLength)
-        //{
-        //    //float deg = Vector2.Angle(velocity, playerMoveVector);
-        //    //if (deg > 90.0f)
-        //    //{
-        //    //    deg = 89.99f;
-        //    //}
-        //}
-        //else
-        //{
-
-        //    this._controller.AddVelocity(newMoveVector);
-        //}
-
     }
 
     Vector2 TranslateForce(Vector2 rawForce, Vector2 ropeDirection, float dir)
     {
         Vector2 translatedVector;
-
-        /*Chain.ChainNode lastRopeNode = rope.nodes[rope.chainMaxCount - 1];
-        Vector2 playerPosition = _player.transform.position;
-        Vector3 toOriginChainNode = (ropeDirection);*/
-        //Debug.DrawRay(playerPosition, toOriginChainNode, Color.red);
         Vector3 playerMoveVector = Vector3.Cross(new Vector3(0, 0, -1), ropeDirection);
-
 
         if (dir < 0)
             playerMoveVector = -1 * playerMoveVector;
-        //Vector3 nextMovePoint = (Vector3)playerPosition + playerMoveVector * direction * 0.01f;
-        //Vector2 nextMovePointToOriginChainNode = rope.chainMaxLength * (lastRopeNode.position - (Vector2)nextMovePoint).normalized;
-        //playerMoveVector = -nextMovePointToOriginChainNode + (Vector2)toOriginChainNode;
 
         float deg = Vector2.Angle(rawForce, playerMoveVector);
         translatedVector = ((Vector2)playerMoveVector).normalized * rawForce.magnitude * Mathf.Cos(Mathf.Deg2Rad * deg);
@@ -181,13 +188,8 @@ public class PlayerRopeSwing : PlayerAbility
         return -1;
     }
 
-
     void CalculateVelocity()
     {
-        //if (_player.playerInfo.state == Player.State.WALL_GRAB) return;
-        //if (_player.playerInfo.state == Player.State.JUMPING) return;
-        // add exception state Up here
-
         int xInputDirection = RoundNormalize(InputManager.Instance.MoveHorizontal);
         int currentXDirection = RoundNormalize(targetVelocityX);
         float targetMaxSpeed = maxMoveSpeed * penaltySpeedRope;
@@ -275,9 +277,6 @@ public class PlayerRopeSwing : PlayerAbility
         }
     }
 
-
-    float theta; // 초기각
-
     void UpdateTheta(Vector3 hookedPosition, Vector3 currentPosition)
     {
         float Xdistance = hookedPosition.x - currentPosition.x;
@@ -286,28 +285,22 @@ public class PlayerRopeSwing : PlayerAbility
         theta = Mathf.Atan2(Xdistance, Ydistance);
     }
 
-    float angularAcceleration;
-    float centripetalAcceleration;
-
     void UpdatePendulumAcceleration()
     {
         angularAcceleration = -ropeGravityAbs * Mathf.Sin(theta);
-        centripetalAcceleration = Mathf.Pow(_controller.controllerPhysics.velocity.magnitude, 2) / rope.chainMaxLength;
+        centripetalAcceleration = Mathf.Pow(_controller.controllerPhysics.velocity.magnitude, 2) / ropeChain.RopeLength;
     }
-
-    float rotateSpeed = 0.01f;
 
     private void AddVelocity()
     {
-        Chain.ChainNode lastRopeNode = rope.nodes[rope.chainMaxCount - 1];
         Vector2 playerPosition = _player.transform.position;
-        Vector2 toOriginChainNode = (Vector2)lastRopeNode.position - playerPosition;
+        Vector2 toOriginChainNode = ropeChain.StartPoint - playerPosition;
 
-        Vector2 t = (toOriginChainNode).normalized * centripetalAcceleration;
-        Vector2 g = ((Vector2)(Vector3.Cross(new Vector3(0, 0, 1), toOriginChainNode))).normalized * angularAcceleration ;
+        Vector2 t = toOriginChainNode.normalized * centripetalAcceleration;
+        Vector2 g = ((Vector2)Vector3.Cross(new Vector3(0, 0, 1), toOriginChainNode)).normalized * angularAcceleration;
 
-        Debug.Log(t + " , " + g + " t + g : " + (t + g));
-        g = TranslateForce(g, toOriginChainNode, RoundNormalize(g.x));
+        //Debug.Log(t + " , " + g + " t + g : " + (t + g));
+        //g = TranslateForce(g, toOriginChainNode, RoundNormalize(g.x));
         _controller.AddVelocity((t + g) * Time.deltaTime);
     }
 

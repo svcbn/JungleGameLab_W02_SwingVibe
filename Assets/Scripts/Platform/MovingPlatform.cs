@@ -19,7 +19,7 @@ public class MovingPlatform : MonoBehaviour
 
 
 
-    private void FixedUpdate()
+    private void Update()
     {
         transform.position = Vector2.MoveTowards(transform.position, desPos.position, Time.deltaTime * speed);
 
