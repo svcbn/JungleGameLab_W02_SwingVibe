@@ -55,6 +55,7 @@ public class AimLineRenderer : MonoBehaviour
             }
             else
             {
+                rope.targetPosition = hit.point;
                 DrawAimLine(aimVec, length);
                 aimCircle.SetActive(true);
                 rope.canCreateChain = true;

@@ -33,7 +33,7 @@ public class PlayerRopeSwing : PlayerAbility
     {
         //hook버튼 클릭시 state변경
         if (_hookButtonClicked
-                && _player.playerInfo.state != Player.State.ROPE)
+                && _player.playerInfo.state != Player.State.ROPE && rope.canCreateChain)
         {
             _player.playerInfo.ropeState = Player.RopeState.HOOKED;
             _player.ChangeState(Player.State.ROPE);
@@ -50,7 +50,10 @@ public class PlayerRopeSwing : PlayerAbility
                 _player.playerInfo.ropeState = Player.RopeState.FAILED;
                 _player.ChangeState(Player.State.IDLE);
             }
-            _player.playerInfo.ropeState = Player.RopeState.HOLDING;
+            else
+            {
+                _player.playerInfo.ropeState = Player.RopeState.HOLDING;
+            }
 
         } 
         //로프 타는중
@@ -82,13 +85,14 @@ public class PlayerRopeSwing : PlayerAbility
     private bool CreateRope()
     {
         Vector2 playerPosition = (Vector2)_player.transform.position;
-        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
+        //Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
         //rope.chainMaxLength = Vector2.Distance(playerPosition, mousePosition);
-        float ropeLength = Vector2.Distance(playerPosition, mousePosition);
-        _controller.SetVelocity(Vector2.zero);
+        Vector2 targetPos = rope.targetPosition;
+        float ropeLength = Vector2.Distance(playerPosition, targetPos);
         if (!rope.CreateChain(ropeLength))
             return false;
-        rope.ChainConnect(playerPosition, mousePosition, ropeLength, 0.5f);
+        _controller.SetVelocity(Vector2.zero);
+        rope.ChainConnect(playerPosition, targetPos, ropeLength, 0.5f);
         return true;
     }
 

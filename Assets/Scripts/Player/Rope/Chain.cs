@@ -221,6 +221,8 @@ public class Chain : MonoBehaviour
 
 	public bool canCreateChain;
 
+	public Vector2 targetPosition;
+
 	private bool isLinear;
 
 	private bool isActive;
