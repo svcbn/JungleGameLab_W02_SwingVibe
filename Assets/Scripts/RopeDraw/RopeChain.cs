@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using Unity.VisualScripting.ReorderableList.Element_Adder_Menu;
 using UnityEditor;
 using UnityEngine;
@@ -49,6 +50,8 @@ public class RopeChain : MonoBehaviour
     public float RopeLength { get => _ropeLen; }
     public Vector2 EndPoint { get => _nodes.Last().pos; }
     public float RopeNodeCount { get => _nodeNum; }
+    public Vector2 TargetPosition { get; set; }
+    public bool CanCreate { get; set; }
 
     protected void Awake()
     {
@@ -151,8 +154,13 @@ public class RopeChain : MonoBehaviour
         _mode = isPendulum ? Mode.PENDULUM : Mode.CATENARY;
     }
 
-    public Vector2 CreateRope(Vector2 startPos, Vector2 endPos, Player player, bool isPendulum=true)
+    public bool CreateRope(out Vector2 revisedPlayerPos, Vector2 startPos, Vector2 endPos, Player player, bool isPendulum=true)
     {
+        if (!CanCreate) {
+            revisedPlayerPos = Vector2.zero;
+            return false;
+        }
+
         _instantiatedChains = new List<GameObject>();
 
         _startPos = startPos;
@@ -180,7 +188,9 @@ public class RopeChain : MonoBehaviour
             }
         }
         
-        return _nodes.Last().pos;
+        revisedPlayerPos = _nodes.Last().pos;
+
+        return true;
     }
 
     public void CancelRope() {

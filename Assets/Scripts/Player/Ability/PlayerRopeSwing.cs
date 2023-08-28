@@ -40,7 +40,7 @@ public class PlayerRopeSwing : PlayerAbility
     {
         //hook버튼 클릭시 state변경
         if (_hookButtonClicked
-                && _player.playerInfo.state != Player.State.ROPE && rope.canCreateChain)
+                && _player.playerInfo.state != Player.State.ROPE && ropeChain.CanCreate)
         {
             _player.playerInfo.ropeState = Player.RopeState.HOOKED;
             _player.ChangeState(Player.State.ROPE);
@@ -54,7 +54,7 @@ public class PlayerRopeSwing : PlayerAbility
             //플레이어의 위치 조정 추가하기
             if (!CreateRope())
             {
-                rope.ChainReset();
+                ropeChain.CancelRope();
                 _player.playerInfo.ropeState = Player.RopeState.FAILED;
                 _player.ChangeState(Player.State.IDLE);
             }
@@ -62,8 +62,6 @@ public class PlayerRopeSwing : PlayerAbility
             {
                 _player.playerInfo.ropeState = Player.RopeState.HOLDING;
             }
-            CreateRope();
-            _player.playerInfo.ropeState = Player.RopeState.HOLDING;
         }
 
         //로프 타는중
@@ -89,18 +87,14 @@ public class PlayerRopeSwing : PlayerAbility
     private bool CreateRope()
     {
         Vector2 playerPosition = (Vector2)_player.transform.position;
-        //Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
-        //rope.chainMaxLength = Vector2.Distance(playerPosition, mousePosition);
-        Vector2 targetPos = rope.targetPosition;
+        Vector2 targetPos = ropeChain.TargetPosition;
         float ropeLength = Vector2.Distance(playerPosition, targetPos);
-        if (!rope.CreateChain(ropeLength))
+        Vector2 revisedPlayerPos;
+        if (!ropeChain.CreateRope(out revisedPlayerPos, targetPos, playerPosition, _player))
             return false;
         _controller.SetVelocity(Vector2.zero);
-        rope.ChainConnect(playerPosition, targetPos, ropeLength, 0.5f);
+        _player.transform.position = revisedPlayerPos;
         return true;
-        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
-        _controller.SetVelocity(Vector2.zero);
-        _player.transform.position = ropeChain.CreateRope(mousePosition, playerPosition, _player);
     }
 
     private void HoldingRope()

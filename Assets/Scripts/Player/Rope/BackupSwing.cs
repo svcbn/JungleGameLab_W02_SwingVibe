@@ -81,7 +81,7 @@ public class BackupSwing : PlayerAbility
         Vector2 playerPosition = (Vector2)_player.transform.position;
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
         _controller.SetVelocity(Vector2.zero);
-        _player.transform.position = ropeChain.CreateRope(mousePosition, playerPosition, _player);
+        //_player.transform.position = ropeChain.CreateRope(mousePosition, playerPosition, _player);
     }
 
     private void HoldingRope()
