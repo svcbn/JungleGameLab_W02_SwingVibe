@@ -388,7 +388,7 @@ public class PlayerRopeSwing : PlayerAbility
                     if (currentPoint.x > originPoint.x + deltaBetween * deltaCount)
                     {
                         _left = 0f + delta * deltaCount;
-                        _right = 1f - delta * deltaCount;
+                        _right = 0.8f - delta * deltaCount;
                         if (_left > 0.7f)
                         {
                             _left = 0.7f;
@@ -403,8 +403,13 @@ public class PlayerRopeSwing : PlayerAbility
                 {
                     if (currentPoint.x > originPoint.x + deltaBetween * deltaCount)
                     {
-                        _left = 0.8f - delta * (deltaCount - deltaCountMax / 2);
-                        _right = 0.3f + delta * (deltaCountMax / 2 - deltaCount);
+                        _left = 0.7f - delta * (deltaCount - deltaCountMax / 2);
+                        _right = 0.1f + delta * (deltaCountMax / 2 - deltaCount);
+
+                        if (_right > 0.8f)
+                        {
+                            _right = 0.8f;
+                        }
 
                         _input.gamepad.SetMotorSpeeds(_left, _right);
                         deltaCount++;
@@ -419,7 +424,12 @@ public class PlayerRopeSwing : PlayerAbility
                     if (currentPoint.x < originPoint.x - deltaBetween * deltaCount)
                     {
                         _left = 0f + delta * deltaCount;
-                        _right = 0.7f - delta * deltaCount;
+                        _right = 0.8f - delta * deltaCount;
+
+                        if (_left > 0.7f)
+                        {
+                            _left = 0.7f;
+                        }
 
                         _input.gamepad.SetMotorSpeeds(_left, _right);
                         deltaCount++;
@@ -430,9 +440,13 @@ public class PlayerRopeSwing : PlayerAbility
                 {
                     if (currentPoint.x < originPoint.x - deltaBetween * deltaCount)
                     {
-                        _left = 1f - delta * (deltaCount - deltaCountMax / 2);
-                        _right = 0.3f + delta * (deltaCountMax / 2 - deltaCount);
+                        _left = 0.7f - delta * (deltaCount - deltaCountMax / 2);
+                        _right = 0.1f + delta * (deltaCountMax / 2 - deltaCount);
 
+                        if (_right > 0.8f)
+                        {
+                            _right = 0.8f;
+                        }
                         _input.gamepad.SetMotorSpeeds(_left, _right);
                         deltaCount++;
                         //Debug.Log("-> " + _left + " , " + _right);
@@ -447,9 +461,15 @@ public class PlayerRopeSwing : PlayerAbility
                 _input.gamepad.SetMotorSpeeds(0.2f, 1f);
                 break;
             }
-            //Debug.Log(deltaCount);
+            Debug.Log(deltaCount);
         }
         isVibe = false;
+
+        if(deltaCount >8 && _player.playerInfo.ropeState == Player.RopeState.HOLDING)
+        {
+            StopAllCoroutines();
+            StartCoroutine(SwingVibration());
+        }
     }
 }
 

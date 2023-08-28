@@ -64,7 +64,8 @@ public class PlayerRopeWarp : PlayerAbility
         _hookButtonClicked = false;
 
         Vector2 targetDir = _targetPos - (Vector2)this.transform.position;
-
+        
+        Time.timeScale = 0.25f;
         this.transform.position = _targetPos - 0.1f * targetDir;
 
         _input.Vibration(0.2f, 0.8f);
@@ -76,7 +77,6 @@ public class PlayerRopeWarp : PlayerAbility
         int count = 0;
         r1.color = cooldownColor;
         r2.color = cooldownColor;
-
         while (warpTime > currentTime)
         {
             _currentPos = Vector2.Lerp(_currentPos, _targetPos, 0.3f);
@@ -90,12 +90,25 @@ public class PlayerRopeWarp : PlayerAbility
             currentTime += Time.deltaTime;
             yield return null;
         }
-
+        
+        StartCoroutine(TimeScaleAdjust());
         yield return new WaitForSeconds(0.5f);
         isCoolDown = false;
-
         r1.color = chargedColor;
         r2.color = chargedColor;
     }
+
+    IEnumerator TimeScaleAdjust()
+    {
+        while (true)
+        {
+            if (Time.timeScale >= 1f) break;
+            yield return null;
+            Time.timeScale += Time.deltaTime * 8f;
+        }
+
+        Time.timeScale = 1f;
+    }
+
 }
 
