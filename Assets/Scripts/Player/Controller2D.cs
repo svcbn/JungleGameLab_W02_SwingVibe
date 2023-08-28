@@ -115,7 +115,7 @@ public class Controller2D : MonoBehaviour
         Rigidbody rigidbody = GetComponent<Rigidbody>();
         _collider = GetComponent<BoxCollider2D>();
         CalculateRaySpacing();
-        collisionMask = LayerMask.GetMask("Ground");
+        collisionMask = LayerMask.GetMask("Ground", "NotPass");
         _player = GetComponent<Player>();
     }
 
@@ -139,7 +139,7 @@ public class Controller2D : MonoBehaviour
         BelowCollision();
 
         transform.Translate(_deltaPos, Space.Self);
-        Debug.Log(_deltaPos);
+        //Debug.Log(_deltaPos);
         controllerPhysics.velocity = _deltaPos / Time.deltaTime;
 
         controllerPhysics.externalForce.x = 0;
