@@ -7,7 +7,7 @@ public class AimLineRenderer : MonoBehaviour
 {
     public LineRenderer lineRenderer;
     public float maxLineLength;
-    public Chain rope;
+    public RopeChain ropeChain;
     public float rayAngle;
     float[] angles;
     RaycastHit2D mainHit;
@@ -61,21 +61,21 @@ public class AimLineRenderer : MonoBehaviour
                 length = maxLineLength;
                 DrawAimLine(aimVec, 0);
                 aimCircle.SetActive(false);
-                rope.canCreateChain = false;
+                ropeChain.CanCreate = false;
             }
             else
             {
-                rope.targetPosition = mainHit.point;
+                ropeChain.TargetPosition = mainHit.point;
                 DrawAimLine(aimVec, length);
                 aimCircle.SetActive(true);
-                rope.canCreateChain = true;
+                ropeChain.CanCreate = true;
             }
         }
         else
         {
             DrawAimLine(aimVec, 0);
             aimCircle.SetActive(false);
-            rope.canCreateChain = false;
+            ropeChain.CanCreate = false;
         }
     }
     

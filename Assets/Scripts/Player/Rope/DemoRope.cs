@@ -92,22 +92,7 @@ public class DemoRope : PlayerAbility
             Vector2 accelarationT = -radiusVec.normalized * Mathf.Pow(_playerVel.magnitude, 2) / _ropeLen;
             Vector2 accelaration = accelarationG + accelarationT;
             Debug.Log(_playerVel + " " + accelaration);
-            float lastVelX = _playerVel.x;
             _playerVel += accelaration * Time.deltaTime;
-
-            //if (lastVelX * _playerVel.x < 0)
-            //{
-            //    _isGivingForce = true;
-            //    if (radiusVec.x * _horizontalMove < 0)
-            //    {
-            //        _playerVel.Normalize();
-            //        _playerVel *= inputForce;
-            //    }
-            //    else
-            //    {
-            //        _playerVel *= friction;
-            //    }
-            //}
 
             if (radiusVec.x * _horizontalMove < 0)
             {
@@ -120,14 +105,6 @@ public class DemoRope : PlayerAbility
         {
             lineRenderer.enabled = false;
         }
-    }
-
-    Vector2 rotate(Vector2 v, float delta)
-    {
-        return new Vector2(
-            v.x * Mathf.Cos(delta) - v.y * Mathf.Sin(delta),
-            v.x * Mathf.Sin(delta) + v.y * Mathf.Cos(delta)
-        );
     }
 
     void DrawLines()
