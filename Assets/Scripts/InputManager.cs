@@ -20,6 +20,8 @@ namespace W02
         public bool JumpButton { get; protected set; }
         public bool HookButton { get; protected set; }
         public bool DashButton { get; protected set; }
+
+        public bool ExitButton { get; protected set; }
         
         // User callback functions
         public Action OnJumpPressed;
@@ -28,6 +30,8 @@ namespace W02
         public Action OnHookReleased;
         public Action OnDashPressed;
         public Action OnDashReleased;
+        public Action OnExitPressed;
+        public Action OnExitReleased;
 
         private BaseInputAction _action;
         private InputAction _moveAction;
@@ -35,6 +39,7 @@ namespace W02
         private InputAction _jumpAction;
         private InputAction _hookAction;
         private InputAction _dashAction;
+        private InputAction _exitAction;
 
         public Gamepad gamepad;
 
@@ -54,6 +59,7 @@ namespace W02
             _jumpAction = _action.Player.Jump;
             _hookAction = _action.Player.Hook;
             _dashAction = _action.Player.Dash;
+            _exitAction = _action.Player.ExitButton;
 
             EnableActions();
 
@@ -67,6 +73,7 @@ namespace W02
             LinkEnableNonInteractionAction(_jumpAction, OnJump, OnCancelJump);
             LinkEnableNonInteractionAction(_hookAction, OnHook, OnCancelHook);
             LinkEnableNonInteractionAction(_dashAction, OnDash, OnCancelDash);
+            LinkEnableNonInteractionAction(_exitAction, OnExit, OnExit);
         }
 
         protected void DisableActions()
@@ -76,6 +83,7 @@ namespace W02
             UnlinkDisableNonInteractionAciton(_jumpAction, OnJump, OnCancelJump);
             UnlinkDisableNonInteractionAciton(_hookAction, OnHook, OnCancelHook);
             UnlinkDisableNonInteractionAciton(_dashAction, OnDash, OnCancelDash);
+            UnlinkDisableNonInteractionAciton(_exitAction, OnExit, OnCancelExit);
         }
 
         // Util functions for InputManager
@@ -193,6 +201,17 @@ namespace W02
             OnDashReleased?.Invoke();
         }
 
+        protected void OnExit(InputAction.CallbackContext context)
+        {
+            ExitButton = true;
+            OnExitPressed?.Invoke();
+        }
+
+        protected void OnCancelExit(InputAction.CallbackContext context)
+        {
+            ExitButton = false;
+            OnExitReleased?.Invoke();
+        }
         /// <summary>
         /// Active Gamepad's vibration with Intensity and Duration
         /// </summary>
