@@ -8,10 +8,14 @@ public class AimLineRenderer : MonoBehaviour
     public LineRenderer lineRenderer;
     public float maxLineLength;
     public Chain rope;
+    public float rayAngle;
+    float[] angles;
+    RaycastHit2D mainHit;
     Vector2 aimPosition;
     LayerMask mask;
     InputUser user;
     Vector2 aimVec;
+    Vector2 targetPos;
     bool isGamepad = false;
     public GameObject aimCircle;
 
@@ -23,7 +27,7 @@ public class AimLineRenderer : MonoBehaviour
         aimCircle.SetActive(false);
     }
 
-    
+
     private void Update()
     {
         
@@ -41,10 +45,13 @@ public class AimLineRenderer : MonoBehaviour
            
         }
         // 충돌 검사
-        RaycastHit2D hit = Physics2D.Raycast(this.transform.position, aimVec, Mathf.Infinity, mask);
-        if (hit.collider != null)
+
+        checkRayCollision();
+        Debug.DrawRay(transform.position, (mainHit.point - (Vector2)transform.position).normalized * maxLineLength, Color.red);
+        aimVec = (mainHit.point - (Vector2)transform.position).normalized;
+        if (mainHit.collider != null)
         {
-            float length = hit.distance;
+            float length = mainHit.distance;
             // 조준선 그리기 및 업데이트
             if (length > maxLineLength)
             {
@@ -55,7 +62,7 @@ public class AimLineRenderer : MonoBehaviour
             }
             else
             {
-                rope.targetPosition = hit.point;
+                rope.targetPosition = mainHit.point;
                 DrawAimLine(aimVec, length);
                 aimCircle.SetActive(true);
                 rope.canCreateChain = true;
@@ -66,14 +73,6 @@ public class AimLineRenderer : MonoBehaviour
             DrawAimLine(aimVec, 0);
             aimCircle.SetActive(false);
             rope.canCreateChain = false;
-            // 조준선 그리기 및 업데이트
-            //    float length = hit.distance;
-            //    if (length > maxLineLength)
-            //    {
-            //        length = maxLineLength;
-            //    }
-            //    DrawAimLine(aimVec, length);
-            //
         }
     }
 
@@ -131,4 +130,41 @@ public class AimLineRenderer : MonoBehaviour
         lineRenderer.SetPosition(0, startPos);
         lineRenderer.SetPosition(1, endPos);
     }
+
+    private bool checkRayCollision()
+    {
+        angles = new float[3] { 0, rayAngle, -rayAngle };
+        RaycastHit2D hit = Physics2D.Raycast(this.transform.position, aimVec, maxLineLength, mask);
+        RaycastHit2D hitLeft = Physics2D.Raycast(this.transform.position, Quaternion.Euler(0f, 0f, rayAngle) * aimVec, maxLineLength, mask);
+        RaycastHit2D hitRight = Physics2D.Raycast(this.transform.position, Quaternion.Euler(0f, 0f, -rayAngle) * aimVec, maxLineLength, mask);
+        RaycastHit2D[] hits = { hit, hitLeft, hitRight };
+        Debug.DrawRay(transform.position, aimVec.normalized * maxLineLength);
+        Debug.DrawRay(transform.position, Quaternion.Euler(0f, 0f, rayAngle) * aimVec.normalized * maxLineLength);
+        Debug.DrawRay(transform.position, Quaternion.Euler(0f, 0f, -rayAngle) * aimVec.normalized * maxLineLength);
+
+        if (hits[0].collider == null)
+        {
+            if (Vector2.Distance(mainHit.point, transform.position) < maxLineLength
+                 && Vector2.Angle(mainHit.point - (Vector2)transform.position, aimVec) < rayAngle)
+            {
+                targetPos = mainHit.point;
+                return true;
+            }
+        }
+
+        for (int i = 0; i < hits.Length; i++)
+        {
+            if (hits[i].collider != null)
+            {
+                aimVec = Quaternion.Euler(0f, 0f, angles[i]) * aimVec.normalized;
+                mainHit = hits[i];
+                targetPos = mainHit.point;
+                return true;
+            }
+        }
+        mainHit = hits[0];
+        targetPos = mainHit.point;
+        return false;
+    }
+
 }
