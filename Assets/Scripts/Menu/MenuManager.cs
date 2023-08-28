@@ -12,6 +12,7 @@ public class MenuManager : MonoBehaviour
 	public GameObject EventSystem;
 	public GameObject UIStartButton;
 	public GameObject UIRestartButton;
+	public Vector3 restartPosition;
 
     private void Start()
     {
@@ -56,6 +57,7 @@ public class MenuManager : MonoBehaviour
 	public void RestartButton()
     {
 		//Time.timeScale = 1f;
+		Player.transform.position = restartPosition;
 		MainMenu.SetActive(false);
 		PauseMenu.SetActive(false);
 		//Player.SetActive(true);
