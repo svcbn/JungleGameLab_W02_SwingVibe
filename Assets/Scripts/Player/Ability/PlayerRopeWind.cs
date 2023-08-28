@@ -16,12 +16,11 @@ public class PlayerRopeWind : PlayerAbility
 
     protected override void HandleInput()
     {
-        Vector2 targetPosition = this.SetTargetPos();
-
+        
         // when jump button pressed && state == rope state
         if (_jumpButtonClicked)
         {
-            StartCoroutine(Wind(targetPosition));
+            StartCoroutine(Wind());
         }
     }
 

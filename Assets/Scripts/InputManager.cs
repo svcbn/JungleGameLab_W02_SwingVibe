@@ -194,10 +194,10 @@ namespace W02
         }
 
         /// <summary>
-        /// Active Gampad's Vibration with Intensity & Duration
+        /// Active Gamepad's vibration with Intensity and Duration
         /// </summary>
-        /// <param name="duration"> (min)0.1f ~ (max)5.0f / time per try </param>
-        /// <param name="intensity"> (min)0.1f ~ (max)1.0f / default 0.5 / off at 0 </param>
+        /// <param name="duration"> (min) 0.1f ~ (max) 5.0f, time per try </param>
+        /// <param name="intensity"> (min) 0.1f ~ (max) 1.0f, default = 0.5, off at 0</param>
         public void Vibration(float duration, float intensity = 0.5f)
         {
             StartCoroutine(StartVibration(duration, intensity));

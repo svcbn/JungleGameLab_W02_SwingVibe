@@ -72,6 +72,11 @@ public class PlayerRopeSwing : PlayerAbility
                 UpdateTheta(ropeChain.StartPoint, _player.transform.position);
                 UpdatePendulumAcceleration();
             }
+            if (!isVibe)
+            {
+                StartCoroutine(SwingVibration());
+            }
+
             HoldingRope();
         }
 
@@ -81,6 +86,10 @@ public class PlayerRopeSwing : PlayerAbility
             ropeChain.CancelRope();
             _player.playerInfo.ropeState = Player.RopeState.FAILED;
             _player.ChangeState(Player.State.IDLE);
+
+            StopAllCoroutines();
+            _input.StopVibration();
+            isVibe = false;
         }
     }
 
@@ -298,4 +307,101 @@ public class PlayerRopeSwing : PlayerAbility
         _controller.AddVelocity((t + g) * Time.deltaTime);
     }
 
+    bool isVibe = false;
+    IEnumerator SwingVibration()
+    {
+        isVibe = true;
+        Vector2 originPoint = this.transform.position;
+        Vector2 currentPoint = this.transform.position;
+        Vector2 pivotPoint = ropeChain.TargetPosition;
+        int targetDirection = RoundNormalize(targetVelocityX);
+
+        //Debug.Log(rope.chainMaxLength);
+        float deltaBetween = 2 * ropeChain.RopeLength * Mathf.Sin(Mathf.Abs(theta)) / 10f;
+
+        float delta = 0.1f;
+        int deltaCount = 1;
+        int deltaCountMax = 10;
+        float _left = 0f;
+        float _right = 0f;
+
+        _input.Vibration(0.2f, 1f);
+        //Debug.Log(currentPoint + " , " + pivotPoint);
+
+        while (deltaCount < deltaCountMax)
+        {
+            currentPoint = this.transform.position;
+
+            if (targetDirection == 1)
+            {
+                if (currentPoint.x < pivotPoint.x)
+                {
+                    if (currentPoint.x > originPoint.x + deltaBetween * deltaCount)
+                    {
+                        _left = 0f + delta * deltaCount;
+                        _right = 1f - delta * deltaCount;
+                        if (_left > 0.7f)
+                        {
+                            _left = 0.7f;
+                        }
+
+                        _input.gamepad.SetMotorSpeeds(_left, _right);
+                        deltaCount++;
+                        //Debug.Log("<- " + _left + " , " + _right);
+                    }
+                }
+                else if (currentPoint.x > pivotPoint.x)
+                {
+                    if (currentPoint.x > originPoint.x + deltaBetween * deltaCount)
+                    {
+                        _left = 0.8f - delta * (deltaCount - deltaCountMax / 2);
+                        _right = 0.3f + delta * (deltaCountMax / 2 - deltaCount);
+
+                        _input.gamepad.SetMotorSpeeds(_left, _right);
+                        deltaCount++;
+                        //Debug.Log("-> " + _left + " , " + _right);
+                    }
+                }
+            }
+            else
+            {
+                if (currentPoint.x > pivotPoint.x)
+                {
+                    if (currentPoint.x < originPoint.x - deltaBetween * deltaCount)
+                    {
+                        _left = 0f + delta * deltaCount;
+                        _right = 0.7f - delta * deltaCount;
+
+                        _input.gamepad.SetMotorSpeeds(_left, _right);
+                        deltaCount++;
+                        // Debug.Log("<- " + _left + " , " + _right);
+                    }
+                }
+                else if (currentPoint.x < pivotPoint.x)
+                {
+                    if (currentPoint.x < originPoint.x - deltaBetween * deltaCount)
+                    {
+                        _left = 1f - delta * (deltaCount - deltaCountMax / 2);
+                        _right = 0.3f + delta * (deltaCountMax / 2 - deltaCount);
+
+                        _input.gamepad.SetMotorSpeeds(_left, _right);
+                        deltaCount++;
+                        //Debug.Log("-> " + _left + " , " + _right);
+                    }
+                }
+            }
+            yield return null;
+
+            if (!_hookButtonClicked)
+            {
+                _input.StopVibration();
+                _input.gamepad.SetMotorSpeeds(0.2f, 1f);
+                break;
+            }
+            //Debug.Log(deltaCount);
+        }
+        isVibe = false;
+    }
 }
+
+
