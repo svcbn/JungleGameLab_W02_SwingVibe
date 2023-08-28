@@ -52,7 +52,7 @@ public class AimLineRenderer : MonoBehaviour
         checkRayCollision();
         Debug.DrawRay(transform.position, (mainHit.point - (Vector2)transform.position).normalized * maxLineLength, Color.red);
         aimVec = (targetPos - (Vector2)transform.position).normalized;
-        if (mainHit.collider != null)
+        if (mainHit.collider != null && !mainHit.collider.CompareTag("UnableGrap"))
         {
             float length = Vector2.Distance(transform.position, targetPos);
             // 조준선 그리기 및 업데이트
@@ -159,7 +159,7 @@ public class AimLineRenderer : MonoBehaviour
                 return true;
             }
         }
-
+        
         if (hits[0].collider == null)
         {
             if (Vector2.Distance(mainHit.point, transform.position) < maxLineLength

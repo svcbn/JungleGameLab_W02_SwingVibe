@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4620970137847531624}
   m_Layer: 8
   m_Name: TargetObject
-  m_TagString: TargetObject
+  m_TagString: Target
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -98,7 +98,7 @@ GameObject:
   - component: {fileID: 5151116675362846142}
   m_Layer: 8
   m_Name: Circle
-  m_TagString: TargetObject
+  m_TagString: Target
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

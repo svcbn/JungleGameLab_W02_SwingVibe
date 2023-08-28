@@ -1,9 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
-using Unity.VisualScripting.ReorderableList.Element_Adder_Menu;
-using UnityEditor;
 using UnityEngine;
 
 public class RopeChain : MonoBehaviour
@@ -75,6 +72,12 @@ public class RopeChain : MonoBehaviour
         }
         else if (_mode == Mode.CATENARY)
         {
+            if ((StartPoint - EndPoint).magnitude > _ropeLen - 0.2f)
+            {
+                DrawPendulumLine();
+                return;
+            }
+            Debug.Log((StartPoint - EndPoint).magnitude);
             DrawCatenaryLine();
         }
     }
@@ -108,12 +111,21 @@ public class RopeChain : MonoBehaviour
     }
 
     private void DrawCatenaryLine() {
-        Vector2 endPos = _nodes.Last().pos;
+        Vector2 pointA;
+        Vector2 pointB;
 
-        float dx = endPos.x - _startPos.x;
-        float xb = (endPos.x + _startPos.x) / 2;
-        float dy = endPos.y - _startPos.y;
-        float yb = (endPos.y + _startPos.y) / 2;
+        if (_startPos.x > _nodes.Last().pos.x) {
+            pointA = _nodes.Last().pos;
+            pointB = _startPos;
+        } else {
+            pointA = _startPos;
+            pointB = _nodes.Last().pos;
+        }
+
+        float dx = Mathf.Abs(pointB.x - pointA.x);
+        float xb = (pointB.x + pointA.x) / 2;
+        float dy = pointB.y - pointA.y;
+        float yb = (pointB.y + pointA.y) / 2;
 
         float r = Mathf.Sqrt(Mathf.Pow(_ropeLen, 2) - Mathf.Pow(dy, 2)) / dx;
 
@@ -132,16 +144,25 @@ public class RopeChain : MonoBehaviour
 
         float a = dx / (2 * A);
         float b = xb - a * tanhi(dy / _ropeLen);
-        float c = _startPos.y - a * cosh((_startPos.x - b) / a);
+        float c = pointA.y - a * cosh((pointA.x - b) / a);
 
         float x, y;
         for (int i = 0; i < _nodeNum; i++)
-        {
-            x = Mathf.Lerp(_startPos.x, endPos.x, ((float)i) / (_nodeNum - 1));
-            y = CalculateCatenary(x, a, b, c);
-            _nodes[i].pos.x = x;
-            _nodes[i].pos.y = y;
-            lineRenderer.SetPosition(i, _nodes[i].pos);
+        {   
+            if (i != 0) {
+                x = Mathf.Lerp(pointA.x, pointB.x, ((float)i) / (_nodeNum - 1));
+                y = CalculateCatenary(x, a, b, c);
+                _nodes[i].pos.x = x;
+                _nodes[i].pos.y = y;
+
+                Vector2 dir = _nodes[i].pos - _nodes[i].prev.pos;
+                float rotate = Vector2.SignedAngle(-dir, Vector2.down);
+                GameObject co = _instantiatedChains[i - 1];
+                co.transform.position = _nodes[i].pos;
+                //Debug.Log(i + " " +_nodes[i].pos);
+                co.transform.rotation = Quaternion.Euler(0, 0, -rotate);
+            }
+            //lineRenderer.SetPosition(i, _nodes[i].pos);
         }
     }
 

@@ -46,8 +46,9 @@ public class Controller2D : MonoBehaviour
         public float epsilon = 0.0001f;
         public Vector2 maxVelocity = new Vector2(100f, 100f);
 
-        [Header("ì¤‘ë ¥ ê´€ë ¨ ì„¤ì •")]
+        [Header("Áß·Â °ü·Ã ¼³Á¤")]
         public float gravity = -30f;
+        public float ropeGravity = -22f;
         [Range(0f, 2f)]
         public float jumpGravityScale = 1f;
         [Range(0f, 2f)]
@@ -62,7 +63,7 @@ public class Controller2D : MonoBehaviour
         [HideInInspector]
         public CollisionInfo prevCollisions;
 
-        [Header("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½")]
+        [Header("???? ????")]
         public DemoRope.Node ropeEndNode;
         public Vector2 lastVelocity;
     }
@@ -110,6 +111,10 @@ public class Controller2D : MonoBehaviour
         }
     }
 
+    public bool IsRopeFalling {
+        get; set;
+    } = false;
+
     private LayerMask collisionMask;
     private float _horizontalRaySpacing;
     private float _verticalRaySpacing;
@@ -125,6 +130,7 @@ public class Controller2D : MonoBehaviour
         CalculateRaySpacing();
         collisionMask = LayerMask.GetMask("Ground", "NotPass");
         _player = GetComponent<Player>();
+        IsRopeFalling = false;
     }
 
     private void LateUpdate()
@@ -139,24 +145,27 @@ public class Controller2D : MonoBehaviour
             transform.position = controllerPhysics.ropeEndNode.pos;
         } else
         {*/
-            ApplyGravity();
+        ApplyGravity();
 
-            ReadyForRaycast();
+        ReadyForRaycast();
 
-            UpdateRaycastOrigins();
-            controllerPhysics.collisions.Reset();
+        UpdateRaycastOrigins();
+        controllerPhysics.collisions.Reset();
 
-            controllerPhysics.prevCollisions = controllerPhysics.collisions;
-            HorizontalCollisions(1);
-            HorizontalCollisions(-1);
-            BelowCollision();
-            AboveCollison();
+        controllerPhysics.prevCollisions = controllerPhysics.collisions;
+        HorizontalCollisions(1);
+        HorizontalCollisions(-1);
+        BelowCollision();
+        AboveCollison();
 
-            transform.Translate(_deltaPos, Space.Self);
+
+        transform.Translate(_deltaPos, Space.Self);
+
         if (_player.playerInfo.state != Player.State.ROPE)
         {
             controllerPhysics.velocity = _deltaPos / Time.deltaTime;
-        } else
+        }
+        else
         {
             if (WasOnGound && !IsOnGround)
             {
@@ -164,8 +173,8 @@ public class Controller2D : MonoBehaviour
                 controllerPhysics.externalForce = Vector3.zero;
             }
         }
-            controllerPhysics.externalForce.x = 0;
-            controllerPhysics.externalForce.y = 0;
+        controllerPhysics.externalForce.x = 0;
+        controllerPhysics.externalForce.y = 0;
         //}
     }
 
@@ -221,9 +230,11 @@ public class Controller2D : MonoBehaviour
     {
         bool isFalling = controllerPhysics.velocity.y < 0;
         float gravity = controllerPhysics.gravity * (isFalling ? controllerPhysics.fallGravityScale : controllerPhysics.jumpGravityScale);
-        if (_player.playerInfo.state == Player.State.ROPE)
+        if (_player.playerInfo.state == Player.State.ROPE && !IsRopeFalling)
         {
             return;
+        } else if (_player.playerInfo.state == Player.State.ROPE && IsRopeFalling) {
+            controllerPhysics.velocity.y += controllerPhysics.ropeGravity * Time.deltaTime;
         }
         controllerPhysics.velocity.y += gravity * Time.deltaTime;
     }
@@ -532,7 +543,7 @@ public class Controller2D : MonoBehaviour
     {
         RaycastHit2D boxHit = Physics2D.BoxCast(origin, size, angle, direction, distance, layerMask);
 
-        // TODO: ë°•ìŠ¤ ê·¸ë¦¬ê¸° (ì¼ë‹¨ ë„˜ê¹€)
+        // TODO: ¹Ú½º ±×¸®±â (ÀÏ´Ü ³Ñ±è)
 
         return boxHit;
     }
