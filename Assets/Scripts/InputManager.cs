@@ -73,7 +73,7 @@ namespace W02
             LinkEnableNonInteractionAction(_jumpAction, OnJump, OnCancelJump);
             LinkEnableNonInteractionAction(_hookAction, OnHook, OnCancelHook);
             LinkEnableNonInteractionAction(_dashAction, OnDash, OnCancelDash);
-            LinkEnableNonInteractionAction(_exitAction, OnExit, OnExit);
+            LinkEnableNonInteractionAction(_exitAction, OnExit, OnCancelExit);
         }
 
         protected void DisableActions()
