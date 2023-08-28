@@ -97,7 +97,6 @@ public class PlayerRopeSwing : PlayerAbility
             ropeChain.CancelRope();
             _player.playerInfo.ropeState = Player.RopeState.FAILED;
             _player.ChangeState(Player.State.WALKING);
-            aimLineRenderer.canWarp = true;
 
             StopAllCoroutines();
             _input.StopVibration();

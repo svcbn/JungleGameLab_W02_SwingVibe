@@ -3,7 +3,7 @@ using UnityEngine;
 public class ColorChange : MonoBehaviour
 {
     private SpriteRenderer spriteRenderer;
-    private float colorChangeInterval = 0.05f; // 색 변화 간격 (초 단위)
+    public float colorChangeInterval = 0.05f; // 색 변화 간격 (초 단위)
     private float timeSinceLastChange = 0.0f;
 
     private void Start()
