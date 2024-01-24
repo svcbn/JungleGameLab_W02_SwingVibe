@@ -10,7 +10,7 @@
 ![](./썸네일.gif)  
 
 ---
-프로젝트 소개 - [Notion](https://www.notion.so/W02_9-_-9a526055a7024ce699401efa9a53026b?pvs=4)  
+프로젝트 소개 - [Notion](https://pickle-orchestra-70c.notion.site/W02_9-_-aa3e407bb14d4c278da4eaa293734367?pvs=4)  
 
 프로젝트 영상 - [추가 예정]()  
 
