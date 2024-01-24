@@ -1,5 +1,5 @@
 # JungleGameLab W02  
-##### Krafton Jungle GameLab Project W02  
+##### Krafton Jungle GameLab Study Project W02  
    
 - 프로젝트명 : SwingVibe
 - 장르 : 2D 플랫포머, 로프 액션
