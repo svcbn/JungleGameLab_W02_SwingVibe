@@ -1,4 +1,4 @@
-# Jungle W02  
+# JungleGameLab W02  
 ##### Krafton Jungle GameLab Project W02  
    
 - 프로젝트명 : SwingVibe
