@@ -4,7 +4,6 @@
 <img src="Thumbnail.gif" width="70%">
 <br/>
    
-- 프로젝트명 : SwingVibe
 - 장르 : 2D 플랫포머, 로프 액션
 - 개발 환경 : Unity, C#  
 - 작업 인원 : 4명
